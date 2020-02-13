@@ -15,23 +15,26 @@ dest = (100,100)
 draw = False # true if the mouse is pressed. 
 a,b = -1,-1  
 mousePath = np.empty((0,2), int)
+allPaths = []
 # mouse callback function  
 def draw_circle(event,x,y,flags,param):  
     global a,b,draw,mousePath 
     if(event == cv2.EVENT_LBUTTONDOWN): 
         if not draw:
-            mousePath = np.append(mousePath, np.array([[x,y]]), axis=0) 
+            mousePath = np.empty((0,2), int)
+            allPaths.append(mousePath)
+            allPaths[len(allPaths)-1] = np.append(allPaths[len(allPaths)-1], np.array([[x,y]]), axis=0) 
         draw = True  
         a,b = x,y
         #cv2.circle(canvas,(x,y),5,(0,0,255),-1)
     elif (event == cv2.EVENT_MOUSEMOVE):  
         if draw == True:  
             #cv2.circle(canvas,(x,y),5,(0,0,255),-1)  
-            mousePath = np.append(mousePath, np.array([[x,y]]), axis=0)
+            allPaths[len(allPaths)-1] = np.append(allPaths[len(allPaths)-1], np.array([[x,y]]), axis=0) 
     elif(event == cv2.EVENT_LBUTTONUP):  
         draw = False
         #cv2.circle(canvas,(x,y),5,(0,0,255),-1)  
-        mousePath = np.append(mousePath, np.array([[x,y]]), axis=0)
+        allPaths[len(allPaths)-1] = np.append(allPaths[len(allPaths)-1], np.array([[x,y]]), axis=0)
 
 #canvas = np.zeros((1024,512,3), np.uint8) 
 cv2.namedWindow('frame') 
@@ -64,14 +67,15 @@ while(True):
         cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
         if inchperpixel!=None:
             cv2.putText(img,"actualwidth is "+str(inchperpixel*w),(x,y-7), 3, 1.2, (0, 255, 0), 2, cv2.LINE_AA)'''
-    for k in range(1,len(mousePath)):
-        cv2.line(img,(mousePath[k-1][0],mousePath[k-1][1]),(mousePath[k][0],mousePath[k][1]),(0,0,255),2)
+    for path in allPaths:
+        for k in range(1,len(path)):
+            cv2.line(img,(path[k-1][0],path[k-1][1]),(path[k][0],path[k][1]),(0,0,255),2)
 
     cv2.imshow('frame',img)
     #cv2.imshow('transparent',canvas)
 
     if cv2.waitKey(5) & 0xFF == ord('q'):
-        print(mousePath);
+        print(allPaths);
         break
 
 cap.release()
