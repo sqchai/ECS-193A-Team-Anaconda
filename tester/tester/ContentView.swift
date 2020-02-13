@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @State private var showDetails = false
