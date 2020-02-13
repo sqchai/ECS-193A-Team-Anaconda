@@ -1,0 +1,83 @@
+//global variable
+Image img
+Info wallInfo
+Path actualPath
+Path diff
+Pos targetPos
+
+Move actualMove
+
+
+void draw() {
+	targetPath = getTargetPath(userInputedRoute)
+	while(targetPath.getNextTarget() != NULL) {
+		if(camera.ready() && car.ready()) {
+			Move nextMove = getNextMove(img, camera.capture(), targetPath.getNextTarget())
+			car.applyMove(nextMove)
+		}
+	}
+}
+
+Move getNextMove(Frame* currImg, Frame* prevImg, Path targetPath) {
+	//path -> user inputed path
+	Path* actualPath
+	Move move = analyze(currImg, prevImg, actualPath, wallInfo)
+	
+	//check by direction
+	//directions: {(ul -> upper_left), (ur -> upper_right), (ll -> lower_left), (lr -> lower_right)}
+	Bool outBound = False
+	if(move.ul()) {
+		//check left bond && top bond
+		if(move.pos.x < targetPos.x || move.pos.y > targetPos.y) {
+			outBound = True
+		}
+	}
+	
+	if(move.ur()) {
+		//check right bond && top bond
+		if(move.pos.x > targetPos.x || move.pos.y > targetPos.y) {
+			outBound = True
+		}
+	}
+	
+	if(move.ll()) {
+		//check left bond && top bond
+		if(move.pos.x < targetPos.x || move.pos.y < targetPos.y) {
+			outBound = True
+		}
+	}
+	
+	if(move.lr()) {
+		//check left bond && top bond
+		if(move.pos.x > targetPos.x || move.pos.y < targetPos.y) {
+			outBound = True
+		}
+	}
+	
+	if (outBound) {
+		targetPos = path.getNextTarget()
+	}
+	
+	Move move
+	move.dir = crossProduct(getVector(p0, p1), getVector(p0, targetPos))
+	return move
+}
+
+void analyze(Frame* currImg, Frame* prevImg) {
+	getDiff(currImg, prevImg)
+	actualPath += diff
+	Dir dir = getDirection(diff)
+	Pos pos = getPosition(diff)
+	
+	actualMove.p0 = actualMove.p1
+	actualMove.p1 = pos
+	actualMove.d0 = dir
+}
+
+void getDiff(Frame* currImg, Frame* prevImg, Info* wallInfo) {
+	calib(currImg, prevImg)	//make sure the two images are alligned
+	gaussianBlur(currImg)
+	gaussianBlur(prevImg)	//make it easy to analyze
+	Image imgDiff = imageDiff(currImg, prevImg)
+	diff = project(*imgDiff, wallInfo)
+}
