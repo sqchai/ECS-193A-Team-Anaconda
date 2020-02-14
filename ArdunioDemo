@@ -1,0 +1,103 @@
+// Arduino Wall-Climbing Car
+
+// Reference: DIY Builder's Youtube Video
+// Link: https://www.youtube.com/watch?v=Q36NbjPMV5k&t=21s
+
+// Hardware components: 
+// 1. Arduino Uno
+// 2. Motor Driver Shield L293D
+// 3. (HC-05 Bluetooth Module)
+
+// Setup Instruction:
+// 1. Click Tools -> Board:"Arduino/Genuino Uno"
+// 2. Click Tools -> Port:"The port that connects to the Bluetooth Module"
+// 3. Install Adafruit Motor Shield Library to establish connection to Arduino Uno via Bluetooth:
+//    https://learn.adafruit.com/adafruit-motor-shield/library-install
+
+#include <AFMotor.h>
+
+//pins connected to motors
+AF_DCMotor motorL(1, MOTOR1_1KHZ);    // left motor pin
+AF_DCMotor motorR(2, MOTOR2_1KHZ);    // right motor pin
+
+void setup() {
+  // setup connection with Bluetooth module
+  Serial.begin(9600)
+}
+
+void loop() {
+  // check if any command is sent to Arduino Uno via Bluetooth module
+  if (Serial.available() > 0) {
+    char commandChar = Serial.read()  // read command from Bluetooth module
+    Stop();                           // reset motor instruction
+    switch(commandChar) {             // execute corresponding command
+      case 'F':                       // F == Move Forward
+        Forward();
+        break;
+      case 'B':                       // B == Back Up
+        Backup();
+        break;
+      case 'l':                       // l == Left Rotation
+        LeftRotation();
+        break;
+      case 'L':                       // L == Left Turn
+        LeftTurn();
+        break;
+      case 'r':                       // r == Right Rotation
+        RightRotation();
+        break;
+      case 'R':                       // R == Right Turn
+        RightTurn();
+        break;
+    }
+  }
+}
+
+void Forward() {
+  motorL.setSpeed(100);               // set motor speed
+  motorL.run(FORWARD);                // set motor direction
+  motorR.setSpeed(100);               // set motor speed
+  motorR.run(FORWARD);                // set motor direction
+}
+
+void Backup() {
+  motorL.setSpeed(100);               // set motor speed
+  motorL.run(BACKWARD);               // set motor direction
+  motorR.setSpeed(100);               // set motor speed
+  motorR.run(BACKWARD);               // set motor direction
+}
+
+void LeftRotation() {
+  motorL.setSpeed(100);               // set motor speed
+  motorL.run(BACKWARD);               // set motor direction
+  motorR.setSpeed(100);               // set motor speed
+  motorR.run(FORWARD);                // set motor direction
+}
+
+void LeftTurn() {
+  motorL.setSpeed(50);                // set motor speed
+  motorL.run(FORWARD);                // set motor direction
+  motorR.setSpeed(100);               // set motor speed
+  motorR.run(FORWARD);                // set motor direction
+}
+
+void RightRotation() {
+  motorL.setSpeed(100);               // set motor speed
+  motorL.run(FORWARD);                // set motor direction
+  motorR.setSpeed(100);               // set motor speed
+  motorR.run(BACKWARD);               // set motor direction
+}
+
+void RightTurn() {
+  motorL.setSpeed(100);               // set motor speed
+  motorL.run(FORWARD);                // set motor direction
+  motorR.setSpeed(50);                // set motor speed
+  motorR.run(FORWARD);                // set motor direction
+}
+
+void Stop() {
+  motorL.setSpeed(0);                 // set motor speed
+  motorL.run(RELEASE);                // set motor direction
+  motorR.setSpeed(0);                 // set motor speed
+  motorR.run(RELEASE);                // set motor direction
+}
