@@ -32,9 +32,7 @@ allPaths = []
 simPaths = []
 
 def calc_angle(p1,p2):
-	if(p1[0]-p2[0]==0):
-		return 0
-	slope = (p1[1]-p2[1])/(p1[0]-p2[0])
+	slope = (p1[1]-p2[1])/((p1[0]-p2[0])+1)
 	angle = math.atan(slope)
 	if(p2[1]<p1[1]):
 		angle+=math.pi
