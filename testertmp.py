@@ -32,6 +32,8 @@ allPaths = []
 simPaths = []
 
 def calc_angle(p1,p2):
+	if(p1[0]-p2[0]==0):
+		return 0
 	slope = (p1[1]-p2[1])/(p1[0]-p2[0])
 	angle = math.atan(slope)
 	if(p2[1]<p1[1]):
@@ -96,6 +98,8 @@ def get_next_move(stroke, path):
 		#car.apply_move(nextMove)'''
 
 def ret_move(p1,p2):
+	#print (p1)
+	#print(p2)
 	angle = calc_angle(p1,p2)
 	print (angle)
 
@@ -107,15 +111,12 @@ def car_start(i):
 	threshold = 10
 	cap = cv2.VideoCapture(0)
 	Frame = cap.read()
-	thresholdtmp = sys.maxsize
-	target = [0,0]
+	target = [i,0]
 	for k in range(0,len(simPaths[i])):
-		for j in range(0,len(allPaths[i])):
-			if(calc_dist(allPaths[i][j][0],allPaths[i][j][0],simPaths[i][k][0],simPaths[i][k][1])<thresholdtmp):
-				thresholdtmp = calc_dist(allPaths[i][j][0],allPaths[i][j][0],simPaths[i][k][0],simPaths[i][k][1])
-				target = [i,j]
-		if(thresholdtmp<threshold):
-			target = [target[0],target[1]+1]
+		#for j in range(0,len(allPaths[i])):
+		if(calc_dist(allPaths[i][target[1]][0],allPaths[i][target[1]][1],simPaths[i][k][0],simPaths[i][k][1])<threshold):
+			if(target[1]+1<len(allPaths[i])):
+				target = [target[0],target[1]+1]
 		ret_move(allPaths[target[0]][target[1]],simPaths[i][k])
 
 
