@@ -2,6 +2,7 @@
 
 const canvas = document.querySelector("#canvas");
 const ctx = canvas.getContext("2d");
+var video = document.querySelector("#video");
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
@@ -148,6 +149,27 @@ function Draw(){
 			}
 		}
 	}
+}
+
+/*--------------------------- Video Background -------------------------*/
+navigator.getUserMedia = navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia;
+
+if (navigator.getUserMedia) {
+   navigator.getUserMedia({ audio: false, video: { width: 1280, height: 720 } },
+      function(stream) {
+         video.srcObject = stream;
+         video.onloadedmetadata = function(e) {
+           video.play();
+         };
+      },
+      function(err) {
+         console.log("The following error occurred: " + err.name);
+      }
+   );
+} else {
+   console.log("getUserMedia not supported");
 }
 
 /*--------------------------- Canvas EventListeners -------------------------*/

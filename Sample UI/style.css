@@ -17,6 +17,21 @@
     margin: 5px 10px;
 }
 
+#video{
+    z-index: 1;
+    position: absolute;
+    top:22px;
+    min-width: 100%;
+    min-height: 100%;
+}
+
 #canvas {
+    z-index: 2;
+    position: absolute;
+    top:22px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #f1f1f1;
+    min-width: 100%;
+    min-height: 100%;
     border: 2px solid black;
 }
