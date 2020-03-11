@@ -20,6 +20,7 @@ let totalBezierVertices = 1000;
 let totalBsplineVertices = 1000;
 
 var sysInfoCount = 0;
+var jsonOutput;
 
 /*------------------ Helper Funct For Implementing Struct -------------------*/
 
@@ -188,6 +189,22 @@ const switchButton 	= document.getElementById("switch-btn");
 
 saveButton.addEventListener('click', () => {
 	alert("Save Button Clicked!");
+
+	// download .json object to local
+	let filename = "output.json";
+    let contentType = "application/json;charset=utf-8;";
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+      var blob = new Blob([decodeURIComponent(encodeURI(JSON.stringify({"vertices":vertices, "bezierVertices":bezierVertices, "bSplineVertices":bSplineVertices})))], { type: contentType });
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+      var a = document.createElement('a');
+      a.download = filename;
+      a.href = 'data:' + contentType + ',' + encodeURIComponent(JSON.stringify({"vertices":vertices, "bezierVertices":bezierVertices, "bSplineVertices":bSplineVertices}));
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
 });
 
 undoButton.addEventListener('click', () => {
