@@ -12,6 +12,8 @@ import ARKit
 import UIKit
 import SceneKit
 
+let ARDelegate = SessionDelegate()
+
 struct ContentView : View {
     @State var settingView = false
     var body: some View {
@@ -56,7 +58,8 @@ struct ARViewContainer: UIViewRepresentable {
     func makeUIView(context: Context) -> ARView {
         
         let arView = ARView(frame: .zero)
-        //arView.session.delegate =
+        ARDelegate.set(arView: arView)
+        arView.session.delegate = ARDelegate
         let config = ARWorldTrackingConfiguration()
         config.planeDetection = [.horizontal, .vertical]
         config.isLightEstimationEnabled = true
@@ -78,8 +81,17 @@ struct ARViewContainer: UIViewRepresentable {
     
 }
 
-class ARViewController: UIViewController, ARSCNViewDelegate {
-    
+final class SessionDelegate: NSObject, ARSessionDelegate{
+    var arView: ARView!
+    var rootAnchor: AnchorEntity?
+
+    func set(arView: ARView) {
+      self.arView = arView
+    }
+    func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+        print("added anchor(s)")
+        print(anchors[anchors.count-1].transform)
+    }
 }
 
 
