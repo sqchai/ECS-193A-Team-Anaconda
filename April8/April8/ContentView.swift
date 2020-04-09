@@ -73,7 +73,12 @@ struct ARViewContainer: UIViewRepresentable {
         
     }
     
-    func updateUIView(_ uiView: ARView, context: Context) {}
+    func updateUIView(_ uiView: ARView, context: Context) {
+    }
+    
+}
+
+class ARViewController: UIViewController, ARSCNViewDelegate {
     
 }
 
