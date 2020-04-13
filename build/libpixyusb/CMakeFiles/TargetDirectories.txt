@@ -1,0 +1,7 @@
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/install/strip.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/edit_cache.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/install.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/rebuild_cache.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/list_install_components.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/pixyusb.dir
+/home/siqi/pixy/build/libpixyusb/CMakeFiles/install/local.dir
