@@ -1,11 +1,13 @@
 package com.example.carappv3;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,9 +29,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String item_name = items.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        final String item_name = items.get(position);
         holder.textView.setText(item_name);
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(context, items.get(position), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
