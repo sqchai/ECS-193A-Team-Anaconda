@@ -30,9 +30,24 @@ public class DrawingListFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         ArrayList<String> items = new ArrayList<>();
-        items.add("item1");
-        items.add("item2");
-        items.add("item3");
+        items.add("design1");
+        items.add("design2");
+        items.add("design3");
+        items.add("design4");
+        items.add("design5");
+        items.add("design6");
+        items.add("design7");
+        items.add("design8");
+        items.add("design9");
+        items.add("design10");
+        items.add("design11");
+        items.add("design12");
+        items.add("design13");
+        items.add("design14");
+        items.add("design15");
+        items.add("design16");
+        items.add("design17");
+        items.add("design18");
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_drawing_list, container, false);
@@ -40,7 +55,7 @@ public class DrawingListFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycle_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        
+
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(getContext(), items);
         recyclerView.setAdapter(recyclerAdapter);
 
