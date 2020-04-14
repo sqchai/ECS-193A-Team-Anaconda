@@ -10,7 +10,6 @@
         android:id="@+id/recycler_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Example"
         android:textSize="30sp"
         android:layout_centerVertical="true">
     </TextView>
