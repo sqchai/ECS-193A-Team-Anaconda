@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".DrawingListFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycle_view_1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="I am a fragment">
-    </TextView>
+        android:layout_height="wrap_content" />
 
 </FrameLayout>
