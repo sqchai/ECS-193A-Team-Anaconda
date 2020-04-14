@@ -1,6 +1,7 @@
 package com.example.carappv3;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, items.get(position), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, items.get(position), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, DesignDetailsActivity.class);
+                context.startActivity(intent);
             }
         });
     }
