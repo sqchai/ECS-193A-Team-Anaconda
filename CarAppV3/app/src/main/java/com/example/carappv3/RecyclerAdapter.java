@@ -38,6 +38,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             public void onClick(View view) {
                 //Toast.makeText(context, items.get(position), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(context, DesignDetailsActivity.class);
+                intent.putExtra("position", position);
+                intent.putExtra("name", items.get(position));
                 context.startActivity(intent);
             }
         });
