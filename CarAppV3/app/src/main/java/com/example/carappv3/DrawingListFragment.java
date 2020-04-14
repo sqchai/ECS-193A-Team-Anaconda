@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -36,11 +37,13 @@ public class DrawingListFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_drawing_list, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_1);
-        RecyclerAdapter
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.recycle_view);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(getContext(), items);
+        recyclerView.setAdapter(recyclerAdapter);
 
-
-        recyclerView.setAdapter(recyclerViewAdapter);
         return view;
     }
 }
