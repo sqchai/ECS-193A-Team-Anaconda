@@ -25,7 +25,7 @@ public class DrawingView extends View {
     public static final int DRAWING_COLOR = R.color.colorRoseRed;
     public static final int CANVAS_COLOR = R.color.colorWhite;
     public static final int TOUCH_TOLERANCE = 4;
-    public static final int STROKE_WIDTH = 1;
+    public static final int STROKE_WIDTH = 10;
 
     private float x0;
     private float y0;
@@ -51,10 +51,6 @@ public class DrawingView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle) {
-        // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.DrawingView, defStyle, 0);
-
         x0 = 0;
         y0 = 0;
         mCanvas = new Canvas();
@@ -77,17 +73,22 @@ public class DrawingView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+//        canvas.save();
+//        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
+//        for(DrawingPath drawingPath : paths) {
+//            mPaint.setColor(getResources().getColor(DRAWING_COLOR));
+//            mCanvas.drawPath(drawingPath.path, mPaint);
+//        }
+//
+//        //TODO: update json file
+//
+//        canvas.restore();
+//        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
         super.onDraw(canvas);
-        canvas.save();
-        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
-        for(DrawingPath drawingPath : paths) {
+        for (DrawingPath drawingPath : paths) {
             mPaint.setColor(getResources().getColor(DRAWING_COLOR));
-            mCanvas.drawPath(drawingPath.path, mPaint);
+            canvas.drawPath(drawingPath.path, mPaint);
         }
-
-        //TODO: update json file
-
-        canvas.restore();
     }
 
     private void touchStart(float x, float y) {
