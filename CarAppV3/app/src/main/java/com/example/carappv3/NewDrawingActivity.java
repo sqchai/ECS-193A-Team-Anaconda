@@ -43,7 +43,11 @@ public class NewDrawingActivity extends AppCompatActivity {
                 finish();
                 return true;
             case R.id.redo:
-                drawingView.
+                drawingView.redo();
+                return true;
+            case R.id.undo:
+                drawingView.undo();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
