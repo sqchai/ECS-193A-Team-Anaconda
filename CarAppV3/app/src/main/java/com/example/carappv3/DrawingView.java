@@ -25,13 +25,18 @@ public class DrawingView extends View {
     public static final int DRAWING_COLOR = R.color.colorRoseRed;
     public static final int CANVAS_COLOR = R.color.colorWhite;
     public static final int TOUCH_TOLERANCE = 4;
-    public static final int STROKE_WIDTH = 10;
+    public static final int STROKE_WIDTH = 15;
 
     private float x0;
     private float y0;
+
+    //bit map for custom canvas to write into
+    private Bitmap mBitmap;
     private Canvas mCanvas;
     private Path mPath;
     private Paint mPaint;
+
+    //list to record all drawing paths
     private ArrayList<DrawingPath> paths = new  ArrayList<>();
     private ArrayList<DrawingPath> redo = new  ArrayList<>();
 
@@ -53,7 +58,9 @@ public class DrawingView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         x0 = 0;
         y0 = 0;
+
         mCanvas = new Canvas();
+
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(getResources().getColor(DRAWING_COLOR));
@@ -67,28 +74,25 @@ public class DrawingView extends View {
     public void initialize(DisplayMetrics displayMetrics) {
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        mCanvas = new Canvas(bitmap);
+
+        //a bit map for the custom canvas to draw into
+        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        canvas.save();
-//        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
-//        for(DrawingPath drawingPath : paths) {
-//            mPaint.setColor(getResources().getColor(DRAWING_COLOR));
-//            mCanvas.drawPath(drawingPath.path, mPaint);
-//        }
-//
-//        //TODO: update json file
-//
-//        canvas.restore();
-//        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
-        super.onDraw(canvas);
-        for (DrawingPath drawingPath : paths) {
+        canvas.save();
+        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
+        for(DrawingPath drawingPath : paths) {
             mPaint.setColor(getResources().getColor(DRAWING_COLOR));
-            canvas.drawPath(drawingPath.path, mPaint);
+            mCanvas.drawPath(drawingPath.path, mPaint);
         }
+
+        //TODO: update json file
+
+        canvas.drawBitmap(mBitmap, 0, 0, mPaint);
+        canvas.restore();
     }
 
     private void touchStart(float x, float y) {
