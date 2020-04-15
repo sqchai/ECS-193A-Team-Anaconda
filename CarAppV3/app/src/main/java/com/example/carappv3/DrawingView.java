@@ -5,23 +5,32 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import java.util.ArrayList;
+
 /**
- * TODO: document your custom view class.
+ * Here we creates a canvas for the user
+ * to input the desired drawing path.
+ * The path is shown on the screen like
+ * in an drawing app.
+ * The path is recorded in a json file.
  */
 public class DrawingView extends View {
-    private String mExampleString; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
-    private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-    private Drawable mExampleDrawable;
+    public static final int DRAWING_COLOR = R.color.colorRoseRed;
+    public static final int CANVAS_COLOR = R.color.colorWhite;
+    public static final int TOUCH_TOLERANCE = 4;
 
-    private TextPaint mTextPaint;
-    private float mTextWidth;
-    private float mTextHeight;
+    private float currX;
+    private float currY;
+    private Canvas canvas;
+    private Paint paint;
+    private ArrayList<Path> paths = new  ArrayList<>();
+    private ArrayList<Path> redo = new  ArrayList<>();
 
     public DrawingView(Context context) {
         super(context);
