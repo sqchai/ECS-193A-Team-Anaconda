@@ -8,13 +8,5 @@
         android:icon="@drawable/ic_add_circle_outline_white_24dp"
         android:title="action_add"
         app:showAsAction="ifRoom"/>
-    <!--
-    <item
-        android:id="@+id/action_open_menu"
-        android:icon="@drawable/ic_menu_white_24dp"
-        android:title="open_menu"
-        app:showAsAction="ifRoom">
-
-    </item>-->
 
 </menu>
