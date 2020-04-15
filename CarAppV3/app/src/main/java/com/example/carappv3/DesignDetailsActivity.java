@@ -15,7 +15,7 @@ public class DesignDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_design_details);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
         getIntentExtra();
     }
 
