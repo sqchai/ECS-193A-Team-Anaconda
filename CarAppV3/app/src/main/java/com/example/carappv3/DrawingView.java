@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -129,4 +130,22 @@ public class DrawingView extends View {
 
         return true;
     }
+
+    private void undo() {
+        if (paths.size() > 0) {
+            redo.add(paths.remove(paths.size() - 1));
+        } else {
+            Toast.makeText(getContext(), "nothing to undo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void redo() {
+        if (redo.size() > 0) {
+            paths.add(redo.remove(redo.size() - 1));
+        } else {
+            Toast.makeText(getContext(), "nothing to redo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    
 }
