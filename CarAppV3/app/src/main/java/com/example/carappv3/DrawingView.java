@@ -2,10 +2,12 @@ package com.example.carappv3;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -66,13 +68,21 @@ public class DrawingView extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
+    public void initialize(DisplayMetrics displayMetrics) {
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(bitmap);
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.save();
-        canvas.drawColor(getResources().getColor(CANVAS_COLOR));
+        mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
         for(DrawingPath drawingPath : paths) {
-            canvas.drawPath(drawingPath.path, mPaint);
+            mPaint.setColor(getResources().getColor(DRAWING_COLOR));
+            mCanvas.drawPath(drawingPath.path, mPaint);
         }
 
         //TODO: update json file
@@ -134,6 +144,7 @@ public class DrawingView extends View {
     private void undo() {
         if (paths.size() > 0) {
             redo.add(paths.remove(paths.size() - 1));
+            invalidate();
         } else {
             Toast.makeText(getContext(), "nothing to undo", Toast.LENGTH_SHORT).show();
         }
@@ -142,10 +153,11 @@ public class DrawingView extends View {
     private void redo() {
         if (redo.size() > 0) {
             paths.add(redo.remove(redo.size() - 1));
+            invalidate();
         } else {
             Toast.makeText(getContext(), "nothing to redo", Toast.LENGTH_SHORT).show();
         }
     }
 
-    
+
 }
