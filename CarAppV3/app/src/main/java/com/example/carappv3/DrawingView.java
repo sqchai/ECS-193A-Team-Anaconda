@@ -52,29 +52,16 @@ public class DrawingView extends View {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.DrawingView, defStyle, 0);
 
-        mExampleString = a.getString(
-                R.styleable.DrawingView_exampleString);
-        mExampleColor = a.getColor(
-                R.styleable.DrawingView_exampleColor,
-                mExampleColor);
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        mExampleDimension = a.getDimension(
-                R.styleable.DrawingView_exampleDimension,
-                mExampleDimension);
+        currX = 0;
+        currY = 0;
+        canvas = new Canvas();
+        paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setColor(getResources().getColor(DRAWING_COLOR));
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeCap(Paint.Cap.ROUND);
 
-        if (a.hasValue(R.styleable.DrawingView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.DrawingView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }
-
-        a.recycle();
-
-        // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
 
         // Update TextPaint and text measurements from attributes
         invalidateTextPaintAndMeasurements();
