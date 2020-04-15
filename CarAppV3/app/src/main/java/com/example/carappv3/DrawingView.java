@@ -146,7 +146,7 @@ public class DrawingView extends View {
         return true;
     }
 
-    private void undo() {
+    public void undo() {
         if (paths.size() > 0) {
             redo.add(paths.remove(paths.size() - 1));
             invalidate();
@@ -155,7 +155,8 @@ public class DrawingView extends View {
         }
     }
 
-    private void redo() {
+
+    public void redo() {
         if (redo.size() > 0) {
             paths.add(redo.remove(redo.size() - 1));
             invalidate();
