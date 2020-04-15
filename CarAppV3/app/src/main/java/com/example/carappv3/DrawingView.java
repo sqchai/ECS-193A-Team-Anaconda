@@ -3,12 +3,10 @@ package com.example.carappv3;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -26,10 +24,11 @@ public class DrawingView extends View {
     public static final int TOUCH_TOLERANCE = 4;
     public static final int STROKE_WIDTH = 1;
 
-    private float currX;
-    private float currY;
-    private Canvas canvas;
-    private Paint paint;
+    private float x0;
+    private float y0;
+    private Canvas mCanvas;
+    private Path mPath;
+    private Paint mPaint;
     private ArrayList<DrawingPath> paths = new  ArrayList<>();
     private ArrayList<DrawingPath> redo = new  ArrayList<>();
 
@@ -53,17 +52,17 @@ public class DrawingView extends View {
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.DrawingView, defStyle, 0);
 
-        currX = 0;
-        currY = 0;
-        canvas = new Canvas();
-        paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setColor(getResources().getColor(DRAWING_COLOR));
-        paint.setStrokeWidth(STROKE_WIDTH);
-        paint.setMaskFilter(null);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeJoin(Paint.Join.ROUND);
-        paint.setStrokeCap(Paint.Cap.ROUND);
+        x0 = 0;
+        y0 = 0;
+        mCanvas = new Canvas();
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(getResources().getColor(DRAWING_COLOR));
+        mPaint.setStrokeWidth(STROKE_WIDTH);
+        mPaint.setMaskFilter(null);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
     @Override
@@ -72,9 +71,62 @@ public class DrawingView extends View {
         canvas.save();
         canvas.drawColor(getResources().getColor(CANVAS_COLOR));
         for(DrawingPath drawingPath : paths) {
-            canvas.drawPath(drawingPath.path, paint);
+            canvas.drawPath(drawingPath.path, mPaint);
         }
+
         //TODO: update json file
+
+        canvas.restore();
     }
 
+    private void touchStart(float x, float y) {
+        mPath = new Path();
+        DrawingPath drawingPath = new DrawingPath(mPath);
+        paths.add(drawingPath);
+
+        mPath.reset();
+        mPath.moveTo(x,y);
+
+        x0 = x;
+        y0 = y;
+    }
+
+    private void touchMove(float x, float y) {
+        float dx = Math.abs(x - x0);
+        float dy = Math.abs(y - y0);
+
+        if((dx >= TOUCH_TOLERANCE) && (dy >= TOUCH_TOLERANCE)) {
+            mPath.quadTo(x0, y0, (x0 + x) / 2, (y0 + y) / 2);
+        }
+
+        x0 = x;
+        y0 = y;
+    }
+
+    private void touchFinish() {
+        mPath.lineTo(x0, y0);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                touchStart(x, y);
+                invalidate();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                touchMove(x, y);
+                invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+                touchFinish();
+                invalidate();
+                break;
+        }
+
+        return true;
+    }
 }
