@@ -1,7 +1,6 @@
 package com.example.carappv3;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -24,10 +23,16 @@ import java.util.ArrayList;
  */
 public class DrawingView extends View {
     public static final int DRAWING_COLOR = R.color.colorRoseRed;
+    public static final int LINE_COLOR = R.color.colorPineAppleYellow;
+    public static final int VERTEX_COLOR = R.color.colorPineArcticBlue;
     public static final int CANVAS_COLOR = R.color.colorWhite;
+
     public static final int TOUCH_TOLERANCE = 4;
     public static final int LINE_PATH_TOLERANCE = 20;
-    public static final int STROKE_WIDTH = 15;
+
+    public static final int DRAWING_STROKE_WIDTH = 15;
+    public static final int LINE_STROKE_WIDTH = 5;
+    public static final int VERTEX_STROKE_WIDTH = 20;
 
     private float x0;
     private float y0;
@@ -41,7 +46,6 @@ public class DrawingView extends View {
     private ArrayList<Point> mVertices;
 
     private Paint mPaint;
-    private Paint mLinePaint;
 
     //list to record all drawing paths
     private ArrayList<DrawingPath> paths = new  ArrayList<>();
@@ -71,7 +75,7 @@ public class DrawingView extends View {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setColor(getResources().getColor(DRAWING_COLOR));
-        mPaint.setStrokeWidth(STROKE_WIDTH);
+        mPaint.setStrokeWidth(DRAWING_STROKE_WIDTH);
         mPaint.setMaskFilter(null);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
@@ -93,7 +97,18 @@ public class DrawingView extends View {
         mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
         for(DrawingPath drawingPath : paths) {
             mPaint.setColor(getResources().getColor(DRAWING_COLOR));
+            mPaint.setStrokeWidth(DRAWING_STROKE_WIDTH);
             mCanvas.drawPath(drawingPath.path, mPaint);
+
+            mPaint.setColor(getResources().getColor(LINE_COLOR));
+            mPaint.setStrokeWidth(LINE_STROKE_WIDTH);
+            mCanvas.drawPath(drawingPath.linePath, mPaint);
+
+            mPaint.setColor(getResources().getColor(VERTEX_COLOR));
+            mPaint.setStrokeWidth(VERTEX_STROKE_WIDTH);
+            for(Point point : drawingPath.vertices) {
+                mCanvas.drawPoint(point.x, point.y, mPaint);
+            }
         }
 
         //TODO: update json file
