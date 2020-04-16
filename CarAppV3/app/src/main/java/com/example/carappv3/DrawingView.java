@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ public class DrawingView extends View {
     public static final int DRAWING_COLOR = R.color.colorRoseRed;
     public static final int CANVAS_COLOR = R.color.colorWhite;
     public static final int TOUCH_TOLERANCE = 4;
+    public static final int LINE_PATH_TOLERANCE = 20;
     public static final int STROKE_WIDTH = 15;
 
     private float x0;
@@ -33,8 +35,13 @@ public class DrawingView extends View {
     //bit map for custom canvas to write into
     private Bitmap mBitmap;
     private Canvas mCanvas;
+
     private Path mPath;
+    private Path mLinePath;
+    private ArrayList<Point> mVertices;
+
     private Paint mPaint;
+    private Paint mLinePaint;
 
     //list to record all drawing paths
     private ArrayList<DrawingPath> paths = new  ArrayList<>();
@@ -97,11 +104,18 @@ public class DrawingView extends View {
 
     private void touchStart(float x, float y) {
         mPath = new Path();
-        DrawingPath drawingPath = new DrawingPath(mPath);
+        mLinePath = new Path();
+        mVertices = new ArrayList<>();
+        DrawingPath drawingPath = new DrawingPath(mPath, mLinePath, mVertices);
         paths.add(drawingPath);
 
         mPath.reset();
         mPath.moveTo(x,y);
+
+        mLinePath.reset();
+        mLinePath.moveTo(x,y);
+
+        mVertices.add(new Point((int)x, (int)y));
 
         x0 = x;
         y0 = y;
@@ -115,12 +129,19 @@ public class DrawingView extends View {
             mPath.quadTo(x0, y0, (x0 + x) / 2, (y0 + y) / 2);
         }
 
+        if((dx >= LINE_PATH_TOLERANCE) || (dy >= LINE_PATH_TOLERANCE)) {
+            mPath.lineTo((x0 + x) / 2, (y0 + y) / 2);
+            mVertices.add(new Point((int)((x0 + x) / 2), (int)((y0 + y) / 2)));
+        }
+
         x0 = x;
         y0 = y;
     }
 
     private void touchFinish() {
         mPath.lineTo(x0, y0);
+        mLinePath.lineTo(x0, y0);
+        mVertices.add(new Point((int)x0, (int)y0));
     }
 
     @Override
