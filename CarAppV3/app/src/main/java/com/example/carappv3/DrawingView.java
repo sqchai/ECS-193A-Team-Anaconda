@@ -145,7 +145,7 @@ public class DrawingView extends View {
         }
 
         if((dx >= LINE_PATH_TOLERANCE) || (dy >= LINE_PATH_TOLERANCE)) {
-            mPath.lineTo((x0 + x) / 2, (y0 + y) / 2);
+            mLinePath.lineTo((x0 + x) / 2, (y0 + y) / 2);
             mVertices.add(new Point((int)((x0 + x) / 2), (int)((y0 + y) / 2)));
         }
 
