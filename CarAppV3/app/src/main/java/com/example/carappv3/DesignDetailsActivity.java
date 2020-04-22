@@ -17,6 +17,9 @@ public class DesignDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getIntentExtra();
+
+        //test WiFi Connection
+
     }
 
     @Override
