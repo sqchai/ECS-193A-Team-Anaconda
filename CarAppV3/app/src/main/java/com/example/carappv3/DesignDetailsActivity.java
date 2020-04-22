@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class DesignDetailsActivity extends AppCompatActivity {
@@ -19,7 +21,17 @@ public class DesignDetailsActivity extends AppCompatActivity {
         getIntentExtra();
 
         //test WiFi Connection
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://www.google.com";
 
+
+        Button wifiButton = findViewById(R.id.wifi_button);
+        wifiButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override
