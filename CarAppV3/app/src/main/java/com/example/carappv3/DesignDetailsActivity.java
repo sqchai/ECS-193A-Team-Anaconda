@@ -30,20 +30,20 @@ public class DesignDetailsActivity extends AppCompatActivity {
 
         //test WiFi Connection
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url ="http://10.0.0.86";
+        String url ="http://10.0.0.86/toggle";
         final StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("Response: ", response);
+                Log.d("Response: ", "succeed");
             }
         }, new Response.ErrorListener () {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("No Response: ", "");
+                Log.d("No Response: ", error.getMessage());
             }
         });
 
-        Button wifiButton = findViewById(R.id.wifi_button);
+        final Button wifiButton = findViewById(R.id.wifi_button);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
