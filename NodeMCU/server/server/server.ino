@@ -6,7 +6,7 @@ uint8_t pin_led = 16;
 
 //motors
 uint8_t m1 = D1;
-bool m1_running_high = false;
+int m1_speed = 0;
 
 char* ssid = "X Air";
 char* password = "Jiang991022";
@@ -16,7 +16,8 @@ void setup() {
   pinMode(pin_led, OUTPUT);
 
   //setup motor pwm
-  //pinMode(m1, OUTPUT);
+  pinMode(m1, OUTPUT);
+  analogWrite(m1, m1_speed);
   
   WiFi.begin(ssid, password);
   Serial.begin(9600);
@@ -47,11 +48,6 @@ void toggleLED() {
 }
 
 void motor1() {
-  if(m1_running_high) {
-    analogWrite(m1, 512);
-    m1_running_high = false;
-  } else {
-    analogWrite(m1, 1023);
-    m1_running_high = true;
-  }
+  m1_speed = server.arg("m1speed").toInt();
+  analogWrite(m1, m1_speed);
 }

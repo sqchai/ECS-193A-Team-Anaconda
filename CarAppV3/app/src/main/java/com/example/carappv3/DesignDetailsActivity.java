@@ -20,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 public class DesignDetailsActivity extends AppCompatActivity {
+    int speed = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class DesignDetailsActivity extends AppCompatActivity {
             }
         });
 
+
+
         final Button wifiButton = findViewById(R.id.wifi_button);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +60,7 @@ public class DesignDetailsActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                
+                speed = seekBar.getProgress();
             }
 
             @Override
