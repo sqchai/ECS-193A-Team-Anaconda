@@ -32,22 +32,8 @@ public class DesignDetailsActivity extends AppCompatActivity {
 
         //test WiFi Connection
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url ="http://10.0.0.86/toggle";
-        String url1 ="http://10.0.0.86/m1?m1speed=";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url1, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("Response: ", "succeed");
-            }
-        }, new Response.ErrorListener () {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("No Response: ", error.getMessage());
-            }
-        });
-
-
+        final String url ="http://10.0.0.86/toggle";
+        final String url1 ="http://10.0.0.86/m1?m1speed=";
 
         final Button wifiButton = findViewById(R.id.wifi_button);
         wifiButton.setOnClickListener(new View.OnClickListener() {
@@ -61,11 +47,6 @@ public class DesignDetailsActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                speed = seekBar.getProgress();
-
-                MappingSpeed mappingSpeed = new MappingSpeed();
-                speed = mappingSpeed.convert(speed, 0, 1023);
-
 
             }
 
@@ -76,7 +57,25 @@ public class DesignDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                speed = seekBar.getProgress();
 
+                MappingSpeed mappingSpeed = new MappingSpeed();
+                speed = mappingSpeed.convert(speed, 0, 1023);
+
+                String speedChangeUrl = url1 + speed;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, speedChangeUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Response: ", "succeed");
+                    }
+                }, new Response.ErrorListener () {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("No Response: ", error.getMessage());
+                    }
+                });
+
+                requestQueue.add(stringRequest);
             }
         });
     }
