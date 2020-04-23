@@ -4,6 +4,9 @@
 ESP8266WebServer server;
 uint8_t pin_led = 16;
 
+//motors
+
+
 char* ssid = "X Air";
 char* password = "Jiang991022";
 
@@ -22,6 +25,9 @@ void setup() {
 
   server.on("/", [](){server.send(200, "text/plain", "Hello World!");});
   server.on("/toggle", toggleLED);
+
+  //motor test
+  server.on("/m1", m1);
   server.begin();
 }
 
@@ -33,4 +39,8 @@ void loop() {
 void toggleLED() {
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "");
+}
+
+void m1() {
+  
 }
