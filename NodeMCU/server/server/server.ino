@@ -6,6 +6,7 @@ uint8_t pin_led = 16;
 
 //motors
 uint8_t m1 = D1;
+uint8_t m1_dir = D3;
 int m1_speed = 0;
 
 char* ssid = "X Air";
@@ -17,7 +18,9 @@ void setup() {
 
   //setup motor pwm
   pinMode(m1, OUTPUT);
+  pinMode(m1_dir, OUTPUT);
   analogWrite(m1, m1_speed);
+  digitalWrite(m1_dir, LOW);
   
   WiFi.begin(ssid, password);
   Serial.begin(9600);

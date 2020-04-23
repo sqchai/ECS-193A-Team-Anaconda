@@ -66,12 +66,12 @@ public class DesignDetailsActivity extends AppCompatActivity {
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, speedChangeUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("Response: ", "succeed");
+                        //Log.d("Response: ", "succeed");
                     }
                 }, new Response.ErrorListener () {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("No Response: ", error.getMessage());
+                        //Log.d("No Response: ", error.getMessage());
                     }
                 });
 
