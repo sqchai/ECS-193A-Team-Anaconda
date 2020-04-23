@@ -5,7 +5,8 @@ ESP8266WebServer server;
 uint8_t pin_led = 16;
 
 //motors
-
+uint8_t m1 = D1;
+bool m1_running_high = false;
 
 char* ssid = "X Air";
 char* password = "Jiang991022";
@@ -13,6 +14,10 @@ char* password = "Jiang991022";
 void setup() {
   // put your setup code here, to run once:
   pinMode(pin_led, OUTPUT);
+
+  //setup motor pwm
+  //pinMode(m1, OUTPUT);
+  
   WiFi.begin(ssid, password);
   Serial.begin(9600);
   while(WiFi.status() != WL_CONNECTED) {
@@ -27,7 +32,7 @@ void setup() {
   server.on("/toggle", toggleLED);
 
   //motor test
-  server.on("/m1", m1);
+  server.on("/m1", motor1);
   server.begin();
 }
 
@@ -41,6 +46,12 @@ void toggleLED() {
   server.send(204, "");
 }
 
-void m1() {
-  
+void motor1() {
+  if(m1_running_high) {
+    analogWrite(m1, 512);
+    m1_running_high = false;
+  } else {
+    analogWrite(m1, 1023);
+    m1_running_high = true;
+  }
 }

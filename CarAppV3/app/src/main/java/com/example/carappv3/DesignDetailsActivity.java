@@ -31,7 +31,8 @@ public class DesignDetailsActivity extends AppCompatActivity {
         //test WiFi Connection
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
         String url ="http://10.0.0.86/toggle";
-        final StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        String url1 ="http://10.0.0.86/m1";
+        final StringRequest stringRequest = new StringRequest(Request.Method.GET, url1, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("Response: ", "succeed");
