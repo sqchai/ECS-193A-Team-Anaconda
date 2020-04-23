@@ -63,6 +63,9 @@ public class DesignDetailsActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 speed = seekBar.getProgress();
 
+                MappingSpeed mappingSpeed = new MappingSpeed();
+                speed = mappingSpeed.convert(speed, 0, 1023);
+
 
             }
 
