@@ -22,4 +22,14 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:text="Button" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/wifi_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="100dp"
+        android:max="100"
+        android:progress="50"/>
 </RelativeLayout>
