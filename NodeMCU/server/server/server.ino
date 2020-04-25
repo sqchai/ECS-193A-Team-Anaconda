@@ -4,6 +4,8 @@
 
 ESP8266WebServer server;
 
+bool flag;
+
 //LED
 uint8_t pin_led = 16;
 
@@ -30,7 +32,9 @@ void setup() {
   digitalWrite(m1_dir, LOW);
 
   //setup servo
-  s1.attach(7);
+  flag = true;
+  s1.attach(13);
+  s1.write(10);
   
   WiFi.begin(ssid, password);
   Serial.begin(9600);
@@ -72,15 +76,22 @@ void motor1() {
 }
 
 void servo1() {
-  //angle = server.arg("servoAngle").toInt();
-  int angle = s1.read();
-  if(angle < 10) {
+  int angle = 170;
+  if(flag) {
     angle = 10;
-  } else if(angle > 170) {
+    flag = false;
+  } else {
     angle = 170;
+    flag = true;
   }
+  //angle = server.arg("servoAngle").toInt();
+//  if(angle < 10) {
+//    angle = 10;
+//  } else if(angle > 170) {
+//    angle = 170;
+//  }
 
-  s1.write(170-angle);
+  s1.write(angle);
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "received");
 }
