@@ -33,13 +33,26 @@ public class DesignDetailsActivity extends AppCompatActivity {
         //test WiFi Connection
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
         final String url ="http://10.0.0.86/toggle";
-        final String url1 ="http://10.0.0.86/m1?m1speed=";
+        final String urlM ="http://10.0.0.86/m1?m1speed=";
+        final String urlS="http://10.0.0.86/servo1";
 
         final Button wifiButton = findViewById(R.id.wifi_button);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //requestQueue.add(stringRequest);
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, urlS, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("R: ", response);
+                    }
+                }, new Response.ErrorListener () {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.d("No Response: ", error.getMessage());
+                    }
+                });
+
+                requestQueue.add(stringRequest);
             }
         });
 
@@ -62,11 +75,11 @@ public class DesignDetailsActivity extends AppCompatActivity {
                 MappingSpeed mappingSpeed = new MappingSpeed();
                 speed = mappingSpeed.convert(speed, 0, 1023);
 
-                String speedChangeUrl = url1 + speed;
+                String speedChangeUrl = urlM + speed;
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, speedChangeUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //Log.d("Response: ", "succeed");
+                        Log.d("R: ", response);
                     }
                 }, new Response.ErrorListener () {
                     @Override
