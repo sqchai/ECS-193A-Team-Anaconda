@@ -64,7 +64,7 @@ struct ARViewContainer: UIViewRepresentable {
         ARDelegate.set(arView: arView)
         arView.session.delegate = ARDelegate
         let config = ARWorldTrackingConfiguration()
-        //config.planeDetection = [.horizontal, .vertical]
+        config.planeDetection = .vertical
         config.isLightEstimationEnabled = true
         config.detectionImages = referenceImages
         // Load the "Box" scene from the "Experience" Reality File
@@ -74,7 +74,7 @@ struct ARViewContainer: UIViewRepresentable {
         //arView.scene.anchors.append(boxAnchor)
         
         arView.debugOptions = [ARView.DebugOptions.showAnchorGeometry]
-        arView.setupGestures()
+        //arView.setupGestures()
         arView.session.run(config)
         return arView
         
@@ -110,7 +110,7 @@ final class SessionDelegate: NSObject, ARSessionDelegate{
     }
 }
 
-extension ARView{
+/*extension ARView{
     func setupGestures() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(_:)))
         self.addGestureRecognizer(tap)
@@ -135,44 +135,31 @@ extension ARView{
         
         guard let raycastQuery = self.makeRaycastQuery(from: point,
                                                        allowing: .existingPlaneInfinite,
-                                                       alignment: .horizontal) else {
+                                                       alignment: .vertical) else {
                                                         
                                                         print("failed first")
                                                         return
         }
         
-        guard let result = self.session.raycast(raycastQuery).first else {
+        /*guard let result = self.session.raycast(raycastQuery).first else {
             print("failed")
             return
-        }
+        }*/
         
-        let transformation = Transform(matrix: result.worldTransform)
-        let box = CustomBox(color: .gray)
-        self.installGestures(.all, for: box)
-        box.generateCollisionShapes(recursive: true)
+        //let transformation = Transform(matrix: result.worldTransform)
+        let box = CustomBox(color: .gray,position: SIMD3(Float(point.x), Float(point.y), Float(-2)))
+        //self.installGestures(.all, for: box)
+        //box.generateCollisionShapes(recursive: true)
         
-        let mesh = MeshResource.generateText(
-            "abcd",
-            extrusionDepth: 0.1,
-            font: .systemFont(ofSize: 2),
-            containerFrame: .zero,
-            alignment: .left,
-            lineBreakMode: .byTruncatingTail)
         
-        let material = SimpleMaterial(color: .red, isMetallic: false)
-        let entity = ModelEntity(mesh: mesh, materials: [material])
-        entity.scale = SIMD3<Float>(0.03, 0.03, 0.1)
+        //box.transform = transformation
         
-        box.addChild(entity)
-        box.transform = transformation
         
-        entity.setPosition(SIMD3<Float>(0, 0.05, 0), relativeTo: box)
-        
-        let raycastAnchor = AnchorEntity(raycastResult: result)
-        raycastAnchor.addChild(box)
-        self.scene.addAnchor(raycastAnchor)
+        //let raycastAnchor = AnchorEntity(raycastResult: result)
+        //raycastAnchor.addChild(box)
+        self.scene.anchors.append(box)
     }
-}
+}*/
 
 class CustomBox: Entity, HasModel, HasAnchoring, HasCollision {
     
