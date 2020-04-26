@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -19,6 +20,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 public class DesignDetailsActivity extends AppCompatActivity {
+    int speed = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,23 +32,62 @@ public class DesignDetailsActivity extends AppCompatActivity {
 
         //test WiFi Connection
         final RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url ="http://10.0.0.86/toggle";
-        final StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("Response: ", "succeed");
-            }
-        }, new Response.ErrorListener () {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("No Response: ", error.getMessage());
-            }
-        });
+        final String url ="http://10.0.0.86/toggle";
+        final String urlM ="http://10.0.0.86/m1?m1speed=";
+        final String urlS="http://10.0.0.86/servo1";
 
         final Button wifiButton = findViewById(R.id.wifi_button);
         wifiButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, urlS, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("R: ", response);
+                    }
+                }, new Response.ErrorListener () {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.d("No Response: ", error.getMessage());
+                    }
+                });
+
+                requestQueue.add(stringRequest);
+            }
+        });
+
+        final SeekBar seekBar = findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                speed = seekBar.getProgress();
+
+                MappingSpeed mappingSpeed = new MappingSpeed();
+                speed = mappingSpeed.convert(speed, 0, 1023);
+
+                String speedChangeUrl = urlM + speed;
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, speedChangeUrl, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("R: ", response);
+                    }
+                }, new Response.ErrorListener () {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Log.d("No Response: ", error.getMessage());
+                    }
+                });
+
                 requestQueue.add(stringRequest);
             }
         });
