@@ -7,11 +7,20 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import org.opencv.android.OpenCVLoader;
+
 public class MainActivity extends AppCompatActivity {
+    private static String TAG = "MainActivity";
+    static {
+        if (OpenCVLoader.initDebug()) {
+            Log.d(TAG, "OpenCv is good");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

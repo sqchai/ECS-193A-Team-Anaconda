@@ -15,7 +15,7 @@ import org.opencv.core.Mat;
 
 public class OpenCV extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-    final String TAG = "OPENCV test";
+    static String TAG = "OPENCV test";
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
