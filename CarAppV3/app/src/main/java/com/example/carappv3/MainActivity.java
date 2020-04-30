@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add:
                 //user wants to add a new drawing
                 //Intent intent = new Intent(this, NewDrawingActivity.class);
-                Intent intent = new Intent(this, OpenCV.class);
+                Intent intent = new Intent(this, NewDrawingActivity.class);
                 startActivity(intent);
                 return true;
             default:
