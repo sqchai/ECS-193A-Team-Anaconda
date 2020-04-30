@@ -65,6 +65,7 @@ public class ImageTracker extends AppCompatActivity {
 //        if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback)){
 //            Log.e("OPENCV", "Cannot connect to OpenCV Manager");
 //        }else Log.i("OPENCV", "opencv successfull");
+        run();
 
 //        match_button = (Button)findViewById(R.id.match_image);
 //        match_button.setOnClickListener(new View.OnClickListener() {
