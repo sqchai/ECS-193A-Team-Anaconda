@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "196063463957",
+    "firebase_url": "https://carappv3.firebaseio.com",
+    "project_id": "carappv3",
+    "storage_bucket": "carappv3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:196063463957:android:f5e9de7e173ad9e7ad1c1c",
+        "android_client_info": {
+          "package_name": "com.example.mlkittest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "196063463957-snn36abh48m7arf374d3qtrgu1jiqikt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3JpYiMxrMK3cUNU2Q67rvAtRcT3LUId8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "196063463957-snn36abh48m7arf374d3qtrgu1jiqikt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
