@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         javaCameraView.setCvCameraViewListener(MainActivity.this);
     }
 
+
+
     @Override
     public void onCameraViewStarted(int width, int height) {
         mRGBA = new Mat(height, width, CvType.CV_8UC4);
