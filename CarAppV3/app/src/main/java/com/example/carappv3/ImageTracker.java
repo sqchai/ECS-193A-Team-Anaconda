@@ -33,29 +33,27 @@ public class ImageTracker extends AppCompatActivity {
     Button match_button;
 
     static {
-        if (OpenCVLoader.initDebug()){
-            Log.d(String.valueOf(R.string.image_tracker_tag), "OpenCV load success");
-        } else {
-            System.loadLibrary("libopencv_java3.so");
+        if (!OpenCVLoader.initDebug()){
+            Log.d(String.valueOf(R.string.image_tracker_tag), "OpenCV not load");
         }
     }
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                    Log.d(String.valueOf(R.string.image_tracker_tag), "OpenCV loaded successfully");
-                    mOpenCvCameraView.enableView();
-                    System.loadLibrary("libopencv_java3.so"); // if you are working with JNI
-                    run();
-                    break;
-                default:
-                    super.onManagerConnected(status);
-                    break;
-            }
-        }
-    };
+//    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+//        @Override
+//        public void onManagerConnected(int status) {
+//            switch (status) {
+//                case LoaderCallbackInterface.SUCCESS:
+//                    Log.d(String.valueOf(R.string.image_tracker_tag), "OpenCV loaded successfully");
+//                    mOpenCvCameraView.enableView();
+//                    System.loadLibrary("libopencv_java3.so"); // if you are working with JNI
+//                    run();
+//                    break;
+//                default:
+//                    super.onManagerConnected(status);
+//                    break;
+//            }
+//        }
+//    };
 
 
     @Override
@@ -64,9 +62,9 @@ public class ImageTracker extends AppCompatActivity {
         setContentView(R.layout.activity_image_tracker);
 
         mOpenCvCameraView = (CameraBridgeViewBase)findViewById(R.id.HelloOpenCvView);
-        if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback)){
-            Log.e("OPENCV", "Cannot connect to OpenCV Manager");
-        }else Log.i("OPENCV", "opencv successfull");
+//        if (!OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback)){
+//            Log.e("OPENCV", "Cannot connect to OpenCV Manager");
+//        }else Log.i("OPENCV", "opencv successfull");
 
 //        match_button = (Button)findViewById(R.id.match_image);
 //        match_button.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +79,7 @@ public class ImageTracker extends AppCompatActivity {
     public void onResume()
     {
         super.onResume();
-        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_3, this, mLoaderCallback);
+        //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION, this, mLoaderCallback);
         mOpenCvCameraView.enableView();
     }
 
