@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 //user wants to add a new drawing
                 //Intent intent = new Intent(this, NewDrawingActivity.class);
                 //Intent intent = new Intent(this, NewDrawingActivity.class);
-                Intent intent = new Intent(this, ImageTracker.class);
+                Intent intent = new Intent(this, CameraX.class);
                 startActivity(intent);
                 return true;
             default:
