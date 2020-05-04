@@ -15,7 +15,7 @@ uint8_t m1_dir = D3;
 uint8_t m2 = D2;
 uint8_t m2_dir = D4;
 int m1_speed = 0;
-
+int m2_speed  = 0;
 //servo
 uint8_t s1_port = 7;
 Servo s1;
@@ -32,6 +32,10 @@ void setup() {
   pinMode(m1_dir, OUTPUT);
   analogWrite(m1, m1_speed);
   digitalWrite(m1_dir, LOW);
+  pinMode(m2, OUTPUT);
+  pinMode(m2_dir, OUTPUT);
+  analogWrite(m2, m2_speed);
+  digitalWrite(m2_dir, LOW);
 
   //setup servo
   flag = true;
