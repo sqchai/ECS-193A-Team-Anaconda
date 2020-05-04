@@ -12,6 +12,8 @@ uint8_t pin_led = 16;
 //motors
 uint8_t m1 = D1;
 uint8_t m1_dir = D3;
+uint8_t m2 = D2;
+uint8_t m2_dir = D4;
 int m1_speed = 0;
 
 //servo
@@ -50,7 +52,7 @@ void setup() {
   server.on("/toggle", toggleLED);
 
   //motor test
-  server.on("/m1", motor1);
+  server.on("/motor", motor);
 
   //servo test
   server.on("/servo1", servo1);
@@ -68,9 +70,11 @@ void toggleLED() {
   server.send(204, "");
 }
 
-void motor1() {
+void motor() {
   m1_speed = server.arg("m1speed").toInt();
+  m2_speed = server.arg("m2speed").toInt();
   analogWrite(m1, m1_speed);
+  analogWrite(m2, m2_speed);
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "received");
 }
