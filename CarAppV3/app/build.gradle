@@ -52,6 +52,8 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-alpha10"
     // If you want to additionally use the CameraX Extensions library
     implementation "androidx.camera:camera-extensions:1.0.0-alpha10"
+    //gson library for serializing and storing path
+    implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

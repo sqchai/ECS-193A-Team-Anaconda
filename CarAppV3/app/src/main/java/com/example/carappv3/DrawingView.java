@@ -7,11 +7,18 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -112,7 +119,6 @@ public class DrawingView extends View {
         }
 
         //TODO: update json file
-
         canvas.drawBitmap(mBitmap, 0, 0, mPaint);
         canvas.restore();
     }
@@ -199,6 +205,27 @@ public class DrawingView extends View {
         } else {
             Toast.makeText(getContext(), "nothing to redo", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void save(){
+        Gson gson = new Gson();
+        for(DrawingPath drawingPath : paths) {
+            String jsonPath = gson.toJson(drawingPath.vertices);
+            System.out.println(jsonPath);
+        }
+        String jsonMap = getStringFromBitmap(mBitmap);
+        System.out.println(jsonMap);
+    }
+
+    private String getStringFromBitmap(Bitmap bitmapPicture) {
+        final int COMPRESSION_QUALITY = 100;
+        String encodedImage;
+        ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
+        bitmapPicture.compress(Bitmap.CompressFormat.PNG, COMPRESSION_QUALITY,
+                byteArrayBitmapStream);
+        byte[] b = byteArrayBitmapStream.toByteArray();
+        encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+        return encodedImage;
     }
 
 
