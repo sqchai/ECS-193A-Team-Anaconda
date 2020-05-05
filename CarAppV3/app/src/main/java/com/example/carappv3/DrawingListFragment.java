@@ -19,7 +19,6 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class DrawingListFragment extends Fragment {
-
     public DrawingListFragment() {
         // Required empty public constructor
     }

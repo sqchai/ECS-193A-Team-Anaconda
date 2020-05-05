@@ -1,6 +1,8 @@
 package com.example.carappv3;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -13,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.carappv3.database.DrawingDBHelper;
+import com.example.carappv3.database.DrawingSchema;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -58,22 +62,26 @@ public class DrawingView extends View {
     private ArrayList<DrawingPath> paths = new  ArrayList<>();
     private ArrayList<DrawingPath> redo = new  ArrayList<>();
 
+    //DB objects
+    private Context mContext;
+    private SQLiteDatabase mDatabase;
+
     public DrawingView(Context context) {
         super(context);
-        init(null, 0);
+        init(null, 0, context);
     }
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(attrs, 0);
+        init(attrs, 0, context);
     }
 
     public DrawingView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(attrs, defStyle);
+        init(attrs, defStyle, context);
     }
 
-    private void init(AttributeSet attrs, int defStyle) {
+    private void init(AttributeSet attrs, int defStyle, Context context) {
         x0 = 0;
         y0 = 0;
 
@@ -87,6 +95,9 @@ public class DrawingView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
+        //getting database for saving
+        mContext = context.getApplicationContext();
+        mDatabase = new DrawingDBHelper(mContext).getWritableDatabase();
     }
 
     public void initialize(DisplayMetrics displayMetrics) {
@@ -209,15 +220,20 @@ public class DrawingView extends View {
 
     public void save(){
         Gson gson = new Gson();
+        ArrayList<String> stringifiedPaths = new  ArrayList<>();
         for(DrawingPath drawingPath : paths) {
             String jsonPath = gson.toJson(drawingPath.vertices);
-            System.out.println(jsonPath);
+            stringifiedPaths.add(jsonPath);
         }
+        String mPaths = gson.toJson(stringifiedPaths);
+        System.out.println(mPaths);
         String jsonMap = getStringFromBitmap(mBitmap);
-        System.out.println(jsonMap);
+        //System.out.println(jsonMap);
+        ContentValues values = getContentValues(mPaths,jsonMap);
+        mDatabase.insert(DrawingSchema.DrawingTable.NAME, null, values);
     }
 
-    private String getStringFromBitmap(Bitmap bitmapPicture) {
+    private static String getStringFromBitmap(Bitmap bitmapPicture) {
         final int COMPRESSION_QUALITY = 100;
         String encodedImage;
         ByteArrayOutputStream byteArrayBitmapStream = new ByteArrayOutputStream();
@@ -228,5 +244,11 @@ public class DrawingView extends View {
         return encodedImage;
     }
 
+    private static ContentValues getContentValues(String paths, String mapstr){
+        ContentValues values = new ContentValues();
+        values.put(DrawingSchema.DrawingTable.Cols.PATHS, paths);
+        values.put(DrawingSchema.DrawingTable.Cols.BITMAP, mapstr);
+        return values;
+    }
 
 }
