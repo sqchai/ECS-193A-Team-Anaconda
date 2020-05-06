@@ -27,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.quickbirdstudios.yuv2mat.Yuv;
+
 
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
@@ -98,7 +100,7 @@ public class Tracker extends AppCompatActivity {
         ImageAnalysis.Analyzer analyzer = new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(ImageProxy image, int rotationDegrees) {
-
+                Mat rebImage = Yuv.rgb(image.getImage());
             }
         };
 

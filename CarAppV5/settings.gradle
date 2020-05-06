@@ -1,2 +1,3 @@
 rootProject.name='CarAppV5'
 include ':app'
+include ':openCVLibrary343'
