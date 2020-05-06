@@ -31,8 +31,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        DrawingListFragment drawingListFragment = new DrawingListFragment();
-        fragmentTransaction.add(R.id.main_activity, drawingListFragment);
+        //DrawingListFragment drawingListFragment = new DrawingListFragment();
+        SavedFilesFragment savedFilesFragment = new SavedFilesFragment();
+        fragmentTransaction.add(R.id.main_activity, savedFilesFragment,"list_fragment");
         fragmentTransaction.commit();
     }
 
@@ -49,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_add:
                 //user wants to add a new drawing
                 //Intent intent = new Intent(this, NewDrawingActivity.class);
-                //Intent intent = new Intent(this, NewDrawingActivity.class);
-                Intent intent = new Intent(this, CameraX.class);
+                Intent intent = new Intent(this, NewDrawingActivity.class);
+                //Intent intent = new Intent(this, CameraX.class);
                 startActivity(intent);
                 return true;
             default:

@@ -15,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.carappv3.database.DrawingDBHelper;
 import com.example.carappv3.database.DrawingSchema;
 import com.google.gson.Gson;
@@ -106,6 +108,15 @@ public class DrawingView extends View {
 
         //a bit map for the custom canvas to draw into
         mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
+    }
+
+    public void initialize(DisplayMetrics displayMetrics,Bitmap bitmap) {
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        //a bit map for the custom canvas to draw into
+        mBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         mCanvas = new Canvas(mBitmap);
     }
 
@@ -231,6 +242,7 @@ public class DrawingView extends View {
         //System.out.println(jsonMap);
         ContentValues values = getContentValues(mPaths,jsonMap);
         mDatabase.insert(DrawingSchema.DrawingTable.NAME, null, values);
+        mDatabase.close();
     }
 
     private static String getStringFromBitmap(Bitmap bitmapPicture) {

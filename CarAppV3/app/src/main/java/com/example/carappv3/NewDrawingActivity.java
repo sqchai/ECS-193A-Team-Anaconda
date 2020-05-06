@@ -2,9 +2,13 @@ package com.example.carappv3;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
@@ -12,13 +16,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.List;
+
 public class NewDrawingActivity extends AppCompatActivity {
     DrawingView drawingView;
+    Bundle mBundle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBundle = savedInstanceState;
         setContentView(R.layout.activity_new_drawing);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -26,7 +34,15 @@ public class NewDrawingActivity extends AppCompatActivity {
         drawingView = findViewById(R.id.drawingView);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        if(getIntent().hasExtra("vertices") && getIntent().hasExtra("bitmap")) {
+            String vertices = getIntent().getStringExtra("vertices");
+            Bitmap bitmap = getBitmapFromString(getIntent().getStringExtra("bitmap"));
+            drawingView.initialize(displayMetrics,bitmap);
+            return;
+            //setDetailsView(position, name);
+        }
         drawingView.initialize(displayMetrics);
+
 
     }
 
@@ -41,6 +57,7 @@ public class NewDrawingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                drawingView.save();
                 finish();
                 return true;
             case R.id.redo:
@@ -54,10 +71,10 @@ public class NewDrawingActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStop(){
-        super.onStop();
-        //Log.v("MyApp", "onStop");
-        drawingView.save();
+
+    private Bitmap getBitmapFromString(String stringPicture) {
+        byte[] decodedString = Base64.decode(stringPicture, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        return decodedByte;
     }
 }
