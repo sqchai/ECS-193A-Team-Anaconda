@@ -21,6 +21,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
@@ -113,8 +114,7 @@ public class Tracker extends AppCompatActivity {
         analysis.setAnalyzer(new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(ImageProxy image, int rotationDegrees) {
-                //Mat mat = Yuv.rgb(image.getImage());
-                //Mat mat = new Mat();
+                Log.d("ANALYZER", "working");
             }
         });
 
