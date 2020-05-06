@@ -19,6 +19,8 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -28,17 +30,29 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
+
+import java.util.List;
 
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     TextureView textureView;
+
+    TextView centerXView;
+    TextView centerYView;
+
 
     //ML Kit Object Detector
     FirebaseVisionObjectDetector firebaseVisionObjectDetector;
@@ -49,6 +63,11 @@ public class Tracker extends AppCompatActivity {
         setContentView(R.layout.activity_tracker);
 
         textureView = findViewById(R.id.view_finder);
+
+        centerXView = findViewById(R.id.centerx_view);
+        centerXView.setText("0");
+        centerYView = findViewById(R.id.centery_view);
+        centerYView.setText("0");
 
         //init ML Kit Vision Detector
         FirebaseVisionObjectDetectorOptions options =
@@ -118,15 +137,62 @@ public class Tracker extends AppCompatActivity {
 
         ImageAnalysisConfig aConfig = new ImageAnalysisConfig.Builder()
                 .setTargetAspectRatio(aspectRatio)
-                .setTargetResolution(screen)
+                .setTargetResolution(new Size(480, 640))
                 .build();
         ImageAnalysis analysis = new ImageAnalysis(aConfig);
+
         analysis.setAnalyzer(new ImageAnalysis.Analyzer() {
+            private int degreesToFirebaseRotation(int degrees) {
+                switch (degrees) {
+                    case 0:
+                        return FirebaseVisionImageMetadata.ROTATION_0;
+                    case 90:
+                        return FirebaseVisionImageMetadata.ROTATION_90;
+                    case 180:
+                        return FirebaseVisionImageMetadata.ROTATION_180;
+                    case 270:
+                        return FirebaseVisionImageMetadata.ROTATION_270;
+                    default:
+                        throw new IllegalArgumentException(
+                                "Rotation must be 0, 90, 180, or 270.");
+                }
+            }
+
             @Override
             public void analyze(ImageProxy image, int rotationDegrees) {
-                Log.d("ANALYZER", "working");
+                if (image == null || image.getImage() == null) {
+                    return;
+                }
+                Image mediaImage = image.getImage();
+                int rotation = degreesToFirebaseRotation(rotationDegrees);
+                FirebaseVisionImage firebaseVisionImage =
+                        FirebaseVisionImage.fromMediaImage(mediaImage, rotation);
+
+                firebaseVisionObjectDetector.processImage(firebaseVisionImage)
+                        .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionObject>>() {
+                            @Override
+                            public void onSuccess(List<FirebaseVisionObject> firebaseVisionObjects) {
+                                //Log.d("Object Detector", "Success");
+                                for (FirebaseVisionObject obj : firebaseVisionObjects) {
+                                    Integer id = obj.getTrackingId();
+                                    Rect bounds = obj.getBoundingBox();
+
+                                    //Log.d("OBJ_DETECTED", (id+": "+bounds.centerX() + " | "+bounds.centerY()));
+                                    centerXView.setText(Integer.toString(bounds.centerX()));
+                                    centerYView.setText(Integer.toString(bounds.centerY()));
+
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d("Object Detector", e.toString());
+                            }
+                        });
             }
         });
+
 
         CameraX.bindToLifecycle((LifecycleOwner)this, preview, analysis);
     }
