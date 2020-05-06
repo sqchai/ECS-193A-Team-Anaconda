@@ -11,6 +11,7 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -84,6 +85,7 @@ public class DrawingView extends View {
     }
 
     private void init(AttributeSet attrs, int defStyle, Context context) {
+        Log.d("in init","!!!!!!");
         x0 = 0;
         y0 = 0;
 
@@ -103,6 +105,7 @@ public class DrawingView extends View {
     }
 
     public void initialize(DisplayMetrics displayMetrics) {
+        Log.d("in initialize","1 argument one     !!!!!!");
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 
@@ -112,6 +115,7 @@ public class DrawingView extends View {
     }
 
     public void initialize(DisplayMetrics displayMetrics,Bitmap bitmap) {
+        Log.d("in initialize","the two argument one  22222   !!!!!!");
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
 
@@ -122,6 +126,7 @@ public class DrawingView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        Log.d("in onDraw","for all paths and vertices");
         canvas.save();
         mCanvas.drawColor(getResources().getColor(CANVAS_COLOR));
         for(DrawingPath drawingPath : paths) {
@@ -237,7 +242,7 @@ public class DrawingView extends View {
             stringifiedPaths.add(jsonPath);
         }
         String mPaths = gson.toJson(stringifiedPaths);
-        System.out.println(mPaths);
+        //System.out.println(mPaths);
         String jsonMap = getStringFromBitmap(mBitmap);
         //System.out.println(jsonMap);
         ContentValues values = getContentValues(mPaths,jsonMap);

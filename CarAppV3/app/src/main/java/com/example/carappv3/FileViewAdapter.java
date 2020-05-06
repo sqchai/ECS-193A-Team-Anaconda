@@ -36,7 +36,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, NewDrawingActivity.class);
+                Intent intent = new Intent(context, StaticPicActivity.class);
                 intent.putExtra("vertices", vertices.get(position));
                 intent.putExtra("bitmap", bitmap.get(position));
                 context.startActivity(intent);

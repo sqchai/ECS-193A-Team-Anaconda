@@ -45,7 +45,6 @@ public class SavedFilesFragment extends Fragment {
                 // looping through all rows and adding to list
                 if (cursor.moveToFirst()) {
                     do {
-                        Log.d("getting file id ", cursor.getString(0));
                         files.add(cursor.getString(0));
                         vertices.add(cursor.getString(1));
                         bitmap.add(cursor.getString(2));
@@ -70,10 +69,8 @@ public class SavedFilesFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d("out of allow refresh", "in on resume");
         super.onResume();
         if(allowRefresh){
-            Log.d("in allow refresh", "in on resume");
             allowRefresh=false;
             getFragmentManager().beginTransaction().detach(this).attach(this).commit();
         }
@@ -81,7 +78,6 @@ public class SavedFilesFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.d("!", "in on Pause");
         super.onPause();
         allowRefresh=true;
     }

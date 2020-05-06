@@ -16,6 +16,9 @@
             android:name=".NewDrawingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity
+            android:name=".StaticPicActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
             android:name=".DesignDetailsActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
         <activity android:name=".MainActivity">
