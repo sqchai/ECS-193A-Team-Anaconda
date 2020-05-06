@@ -10,12 +10,15 @@ bool flag;
 uint8_t pin_led = 16;
 
 //motors
-uint8_t m1 = D1;
+uint8_t m1_speed = D1;
 uint8_t m1_dir = D3;
-uint8_t m2 = D2;
+uint8_t m2_speed = D2;
 uint8_t m2_dir = D4;
-int m1_speed = 0;
-int m2_speed  = 0;
+int speed1 = 0;
+int speed2  = 0;
+int dir1 = 0;
+int dir2 = 0;
+
 //servo
 uint8_t s1_port = 7;
 Servo s1;
@@ -28,13 +31,13 @@ void setup() {
   pinMode(pin_led, OUTPUT);
 
   //setup motor pwm
-  pinMode(m1, OUTPUT);
+  pinMode(m1_speed, OUTPUT);
   pinMode(m1_dir, OUTPUT);
-  analogWrite(m1, m1_speed);
+  analogWrite(m1_speed, speed1);
   digitalWrite(m1_dir, LOW);
-  pinMode(m2, OUTPUT);
+  pinMode(m2_speed, OUTPUT);
   pinMode(m2_dir, OUTPUT);
-  analogWrite(m2, m2_speed);
+  analogWrite(m2_speed, speed2);
   digitalWrite(m2_dir, LOW);
 
   //setup servo
@@ -75,10 +78,17 @@ void toggleLED() {
 }
 
 void motor() {
-  m1_speed = server.arg("m1speed").toInt();
-  m2_speed = server.arg("m2speed").toInt();
-  analogWrite(m1, m1_speed);
-  analogWrite(m2, m2_speed);
+  speed1 = server.arg("speed1").toInt();
+  speed2 = server.arg("speed2").toInt();
+  dir1 = server.arg("dir1").toInt();
+  dir2 = server.arg("dir2").toInt();
+  
+  server.arg("dir2").
+  analogWrite(m1_speed, speed1);
+  analogWrite(m2_speed, speed2);
+  digitalWrite(m1_dir, dir1);
+  digitalWrite(m2_dir, dir2);
+  
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "received");
 }
