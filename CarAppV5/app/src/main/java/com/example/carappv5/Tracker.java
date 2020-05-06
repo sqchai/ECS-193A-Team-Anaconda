@@ -31,12 +31,13 @@ import android.widget.Toast;
 
 import com.quickbirdstudios.yuv2mat.Yuv;
 
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-
 
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
     TextureView textureView;
 
     @Override
@@ -108,14 +109,16 @@ public class Tracker extends AppCompatActivity {
                 .setTargetAspectRatio(aspectRatio)
                 .setTargetResolution(screen)
                 .build();
-        ImageAnalysis.Analyzer analyzer = new ImageAnalysis.Analyzer() {
+        ImageAnalysis analysis = new ImageAnalysis(aConfig);
+        analysis.setAnalyzer(new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(ImageProxy image, int rotationDegrees) {
-                Mat rebImage = Yuv.rgb(image.getImage());
+                //Mat mat = Yuv.rgb(image.getImage());
+                //Mat mat = new Mat();
             }
-        };
+        });
 
-        CameraX.bindToLifecycle((LifecycleOwner)this, preview);
+        CameraX.bindToLifecycle((LifecycleOwner)this, preview, analysis);
     }
 
     private void updateTransform(){
