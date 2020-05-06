@@ -30,11 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.quickbirdstudios.yuv2mat.Yuv;
-
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
-
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
