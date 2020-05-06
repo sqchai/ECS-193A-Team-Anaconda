@@ -4,12 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
+import androidx.camera.core.Preview;
+import androidx.camera.core.PreviewConfig;
 import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageAnalysisConfig;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.ImageProxy;
-import androidx.camera.core.Preview;
-import androidx.camera.core.PreviewConfig;
+import androidx.camera.core.UseCase;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
@@ -28,6 +30,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.quickbirdstudios.yuv2mat.Yuv;
+
+import org.opencv.core.Mat;
 
 
 public class Tracker extends AppCompatActivity {
@@ -79,7 +83,10 @@ public class Tracker extends AppCompatActivity {
 
         Rational aspectRatio = new Rational (textureView.getWidth(), textureView.getHeight());
         Size screen = new Size(textureView.getWidth(), textureView.getHeight()); //size of the screen
-        PreviewConfig pConfig = new PreviewConfig.Builder().setTargetAspectRatio(aspectRatio).setTargetResolution(screen).build();
+        PreviewConfig pConfig = new PreviewConfig.Builder()
+                .setTargetAspectRatio(aspectRatio)
+                .setTargetResolution(screen)
+                .build();
         Preview preview = new Preview(pConfig);
 
         preview.setOnPreviewOutputUpdateListener(
@@ -97,6 +104,10 @@ public class Tracker extends AppCompatActivity {
                 });
 
 
+        ImageAnalysisConfig aConfig = new ImageAnalysisConfig.Builder()
+                .setTargetAspectRatio(aspectRatio)
+                .setTargetResolution(screen)
+                .build();
         ImageAnalysis.Analyzer analyzer = new ImageAnalysis.Analyzer() {
             @Override
             public void analyze(ImageProxy image, int rotationDegrees) {
