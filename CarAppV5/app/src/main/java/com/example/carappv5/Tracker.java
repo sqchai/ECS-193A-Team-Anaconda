@@ -30,11 +30,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
+import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
+
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     TextureView textureView;
+
+    //ML Kit Object Detector
+    FirebaseVisionObjectDetector firebaseVisionObjectDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,14 @@ public class Tracker extends AppCompatActivity {
 
         textureView = findViewById(R.id.view_finder);
 
+        //init ML Kit Vision Detector
+        FirebaseVisionObjectDetectorOptions options =
+                new FirebaseVisionObjectDetectorOptions.Builder()
+                        .setDetectorMode(FirebaseVisionObjectDetectorOptions.STREAM_MODE)
+                        .build();
+        firebaseVisionObjectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options);
+
+        //Check Permission and start camera
         if(allPermissionsGranted()) {
             startCamera();
         } else {
