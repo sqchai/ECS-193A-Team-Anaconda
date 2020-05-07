@@ -24,8 +24,8 @@ volatile int dirA = 0;
 volatile int dirB = 0;
 
 //Encoders Settings
-const uint8_t MA_INT = 13;
-const uint8_t MB_INT = 15;
+const uint8_t MA_INT = D7;
+const uint8_t MB_INT = D8;
 const float DISKSLOTS = 20.00;
 const float WHEELDIAMETER = 66.10;
 volatile unsigned int count_A = 0;
@@ -36,87 +36,9 @@ Ticker ticker;
 //uint8_t s1_port = 13;
 //Servo s1;
 
-
-//Setup
-void setup() {
-  // put your setup code here, to run once:
-  pinMode(pin_led, OUTPUT);
-
-  //setup motor pwm
-  pinMode(mA_speed, OUTPUT);
-  pinMode(mA_dir, OUTPUT);
-  analogWrite(mA_speed, speedA);
-  digitalWrite(mA_dir, LOW);
-  pinMode(mB_speed, OUTPUT);
-  pinMode(mB_dir, OUTPUT);
-  analogWrite(mB_speed, speedB);
-  digitalWrite(mB_dir, LOW);
-
-  //setup encoders
-  attachInterrupt(digitalPinToInterrupt(MA_INT), ISR_countA, RISING);
-  attachInterrupt(digitalPinToInterrupt(MB_INT), ISR_countB, RISING);
-  ticker.attach_ms(100, ISR_ticker);
-
-  //setup servo
-  //flag = true;
-  //s1.attach(s1_port);
-  //s1.write(10);
-  
-  WiFi.begin(ssid, password);
-  Serial.begin(115200);
-  while(WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(500);
-  }
-  Serial.println("");
-  Serial.print("IP Address: ");
-  Serial.print(WiFi.localIP());
-
-  server.on("/", [](){server.send(200, "text/plain", "Hello World!");});
-  server.on("/toggle", toggleLED);
-
-  //motor test
-  server.on("/motor", motor);
-
-  //servo test
-  //server.on("/servo1", servo1);
-  
-  server.begin();
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-  server.handleClient();
-}
-
 void toggleLED() {
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "");
-}
-
-//encoder counter at interrupt
-void ISR_countA() {
-  count_A++;
-}
-
-void ISR_countB() {
-  count_B++;
-}
-
-void ISR_ticker() {
-  ticker.detach();
-  Serial.println("Motor A speed: ");
-  float speedA = (count_A / DISKSLOTS) * 60.0;
-  Serial.print(speedA);
-  Serial.print(" RPM - ");
-  count_A = 0;
-
-  Serial.print("Motor B speed: ");
-  float speedB = (count_B / DISKSLOTS) * 60.0;
-  Serial.print(speedB);
-  Serial.print(" RPM");
-  count_B = 0;
-  ticker.attach_ms(1000, ISR_ticker);
 }
 
 void motor() {
@@ -154,3 +76,75 @@ void motor() {
 //  digitalWrite(pin_led, !digitalRead(pin_led));
 //  server.send(204, "received");
 //}
+
+//encoder counter at interrupt
+void ISR_countA() {
+  count_A++;
+}
+
+void ISR_countB() {
+  count_B++;
+}
+
+void ISR_ticker() {
+  ticker.detach();
+  Serial.print("Motor A speed: ");
+  float speedA = (count_A / DISKSLOTS) * 180.0;
+  Serial.print(speedA);
+  Serial.print(" RPM - ");
+  count_A = 0;
+
+  Serial.print("Motor B speed: ");
+  float speedB = (count_B / DISKSLOTS) * 180.0;
+  Serial.print(speedB);
+  Serial.println(" RPM");
+  count_B = 0;
+  ticker.attach_ms(300, ISR_ticker);
+}
+
+//Setup
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(pin_led, OUTPUT);
+
+  //setup motor pwm
+  pinMode(mA_speed, OUTPUT);
+  pinMode(mA_dir, OUTPUT);
+  analogWrite(mA_speed, speedA);
+  digitalWrite(mA_dir, LOW);
+  pinMode(mB_speed, OUTPUT);
+  pinMode(mB_dir, OUTPUT);
+  analogWrite(mB_speed, speedB);
+  digitalWrite(mB_dir, LOW);
+
+  //setup encoders
+  attachInterrupt(digitalPinToInterrupt(MA_INT), ISR_countA, RISING);
+  attachInterrupt(digitalPinToInterrupt(MB_INT), ISR_countB, RISING);
+  ticker.attach_ms(300, ISR_ticker);
+
+  //setup servo
+  //flag = true;
+  //s1.attach(s1_port);
+  //s1.write(10);
+  
+  WiFi.begin(ssid, password);
+  Serial.begin(115200);
+  while(WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  server.on("/toggle", toggleLED);
+
+  //motor test
+  server.on("/motor", motor);
+
+  //servo test
+  //server.on("/servo1", servo1);
+  
+  server.begin();
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  server.handleClient();
+}
