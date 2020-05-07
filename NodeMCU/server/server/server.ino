@@ -1,49 +1,66 @@
+#include <Ticker.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <Servo.h>
 
+//Network Settings
 ESP8266WebServer server;
-
-bool flag;
-
-//LED
-uint8_t pin_led = 16;
-
-//motors
-uint8_t m1_speed = D1;
-uint8_t m1_dir = D3;
-uint8_t m2_speed = D2;
-uint8_t m2_dir = D4;
-int speed1 = 0;
-int speed2  = 0;
-int dir1 = 0;
-int dir2 = 0;
-
-//servo
-uint8_t s1_port = 7;
-Servo s1;
-
 char* ssid = "X Air";
 char* password = "Jiang991022";
 
+//LED Settings
+bool flag;
+//LED
+uint8_t pin_led = 16;
+
+//Motor Settings
+const uint8_t mA_speed = D1;
+const uint8_t mB_speed = D2;
+const uint8_t mA_dir = D3;
+const uint8_t mB_dir = D4;
+volatile int speedA = 0;
+volatile int speedB  = 0;
+volatile int dirA = 0;
+volatile int dirB = 0;
+
+//Encoders Settings
+const uint8_t MA_INT = D7;
+const uint8_t MB_INT = D8;
+const float DISKSLOTS = 20.00;
+const float WHEELDIAMETER = 66.10;
+volatile unsigned int count_A = 0;
+volatile unsigned int count_B = 0;
+Ticker ticker;
+
+//Servo Settings
+//uint8_t s1_port = 13;
+//Servo s1;
+
+
+//Setup
 void setup() {
   // put your setup code here, to run once:
   pinMode(pin_led, OUTPUT);
 
   //setup motor pwm
-  pinMode(m1_speed, OUTPUT);
-  pinMode(m1_dir, OUTPUT);
-  analogWrite(m1_speed, speed1);
-  digitalWrite(m1_dir, LOW);
-  pinMode(m2_speed, OUTPUT);
-  pinMode(m2_dir, OUTPUT);
-  analogWrite(m2_speed, speed2);
-  digitalWrite(m2_dir, LOW);
+  pinMode(mA_speed, OUTPUT);
+  pinMode(mA_dir, OUTPUT);
+  analogWrite(mA_speed, speedA);
+  digitalWrite(mA_dir, LOW);
+  pinMode(mB_speed, OUTPUT);
+  pinMode(mB_dir, OUTPUT);
+  analogWrite(mB_speed, speedB);
+  digitalWrite(mB_dir, LOW);
+
+  //setup encoders
+  attachInterrupt(digitalPinToInterrupt(MA_INT), ISR_countA, RISING);
+  attachInterrupt(digitalPinToInterrupt(MB_INT), ISR_countB, RISING);
+  ticker.attach_ms(100, ISR_ticker);
 
   //setup servo
-  flag = true;
-  s1.attach(13);
-  s1.write(10);
+  //flag = true;
+  //s1.attach(s1_port);
+  //s1.write(10);
   
   WiFi.begin(ssid, password);
   Serial.begin(9600);
@@ -62,7 +79,7 @@ void setup() {
   server.on("/motor", motor);
 
   //servo test
-  server.on("/servo1", servo1);
+  //server.on("/servo1", servo1);
   
   server.begin();
 }
@@ -77,39 +94,63 @@ void toggleLED() {
   server.send(204, "");
 }
 
+//encoder counter at interrupt
+void ISR_countA() {
+  count_A++;
+}
+
+void ISR_countB() {
+  count_B++;
+}
+
+void ISR_ticker() {
+  ticker.detach();
+  Serial.print("Motor A speed: ");
+  float speedA = (count_A / DISKSLOTS) * 60.0;
+  Serial.print(speedA);
+  Serial.print(" RPM - ");
+  count_A = 0;
+
+  Serial.print("Motor B speed: ");
+  float speedB = (count_B / DISKSLOTS) * 60.0;
+  Serial.print(speedB);
+  Serial.print(" RPM");
+  count_B = 0;
+  ticker.attach_ms(100, ISR_ticker);
+}
+
 void motor() {
-  speed1 = server.arg("speed1").toInt();
-  speed2 = server.arg("speed2").toInt();
-  dir1 = server.arg("dir1").toInt();
-  dir2 = server.arg("dir2").toInt();
-  
-  server.arg("dir2").
-  analogWrite(m1_speed, speed1);
-  analogWrite(m2_speed, speed2);
-  digitalWrite(m1_dir, dir1);
-  digitalWrite(m2_dir, dir2);
+  speedA = server.arg("speedA").toInt();
+  speedB = server.arg("speedB").toInt();
+  dirA = server.arg("dirA").toInt();
+  dirB = server.arg("dirB").toInt();
+ 
+  analogWrite(mA_speed, speedA);
+  analogWrite(mB_speed, speedB);
+  digitalWrite(mA_dir, dirA);
+  digitalWrite(mB_dir, dirB);
   
   digitalWrite(pin_led, !digitalRead(pin_led));
   server.send(204, "received");
 }
 
-void servo1() {
-  int angle = 170;
-  if(flag) {
-    angle = 10;
-    flag = false;
-  } else {
-    angle = 170;
-    flag = true;
-  }
-  //angle = server.arg("servoAngle").toInt();
-//  if(angle < 10) {
+//void servo1() {
+//  int angle = 170;
+//  if(flag) {
 //    angle = 10;
-//  } else if(angle > 170) {
+//    flag = false;
+//  } else {
 //    angle = 170;
+//    flag = true;
 //  }
-
-  s1.write(angle);
-  digitalWrite(pin_led, !digitalRead(pin_led));
-  server.send(204, "received");
-}
+//  //angle = server.arg("servoAngle").toInt();
+////  if(angle < 10) {
+////    angle = 10;
+////  } else if(angle > 170) {
+////    angle = 170;
+////  }
+//
+//  s1.write(angle);
+//  digitalWrite(pin_led, !digitalRead(pin_led));
+//  server.send(204, "received");
+//}
