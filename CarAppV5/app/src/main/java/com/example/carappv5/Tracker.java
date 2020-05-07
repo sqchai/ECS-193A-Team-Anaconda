@@ -75,7 +75,6 @@ public class Tracker extends AppCompatActivity {
                         .setDetectorMode(FirebaseVisionObjectDetectorOptions.STREAM_MODE)
                         .build();
         firebaseVisionObjectDetector = FirebaseVision.getInstance().getOnDeviceObjectDetector(options);
-
         //Check Permission and start camera
         if(allPermissionsGranted()) {
             startCamera();
