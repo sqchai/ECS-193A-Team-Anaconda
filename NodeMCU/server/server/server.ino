@@ -24,8 +24,8 @@ volatile int dirA = 0;
 volatile int dirB = 0;
 
 //Encoders Settings
-const uint8_t MA_INT = D7;
-const uint8_t MB_INT = D8;
+const uint8_t MA_INT = 13;
+const uint8_t MB_INT = 15;
 const float DISKSLOTS = 20.00;
 const float WHEELDIAMETER = 66.10;
 volatile unsigned int count_A = 0;
@@ -63,7 +63,7 @@ void setup() {
   //s1.write(10);
   
   WiFi.begin(ssid, password);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while(WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(500);
@@ -105,7 +105,7 @@ void ISR_countB() {
 
 void ISR_ticker() {
   ticker.detach();
-  Serial.print("Motor A speed: ");
+  Serial.println("Motor A speed: ");
   float speedA = (count_A / DISKSLOTS) * 60.0;
   Serial.print(speedA);
   Serial.print(" RPM - ");
@@ -116,7 +116,7 @@ void ISR_ticker() {
   Serial.print(speedB);
   Serial.print(" RPM");
   count_B = 0;
-  ticker.attach_ms(100, ISR_ticker);
+  ticker.attach_ms(1000, ISR_ticker);
 }
 
 void motor() {

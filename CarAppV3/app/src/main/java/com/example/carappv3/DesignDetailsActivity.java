@@ -69,16 +69,16 @@ public class DesignDetailsActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                int m1_speed = 0;
-                int m2_speed = 0;
-                m1_speed = seekBar.getProgress();
-                m2_speed = seekBar.getProgress();
+                int mA_speed = 0;
+                int mB_speed = 0;
+                mA_speed = seekBar.getProgress();
+                mB_speed = seekBar.getProgress();
 
                 MappingSpeed mappingSpeed = new MappingSpeed();
-                m1_speed = mappingSpeed.convert(m1_speed, 0, 1023);
-                m2_speed = mappingSpeed.convert(m2_speed, 0, 1023);
+                mA_speed = mappingSpeed.convert(mA_speed, 0, 1023);
+                mB_speed = mappingSpeed.convert(mB_speed, 0, 1023);
 
-                String speedChangeUrl = "http://10.0.0.86/motor?m1speed=" + m1_speed + "&m2speed=" + m2_speed;
+                String speedChangeUrl = "http://10.0.0.86/motor?speedA=" + mA_speed + "&speedB=" + mB_speed;
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, speedChangeUrl, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
