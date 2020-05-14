@@ -18,7 +18,8 @@ public class Guider {
     private float angle;
 
     RequestQueue requestQueue;
-    final String gyroRequest="http://10.0.0.86/gyro";
+    StringRequest gyroRequest;
+
 
     public void updateCarPos(int x, int y) {
         this.x = x;
@@ -26,20 +27,7 @@ public class Guider {
     }
 
     public void updateCarDir() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, gyroRequest,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        angle = Float.parseFloat(response);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, "gyro request error");
-                    }
-                });
-        stringRequest
+        this.requestQueue.add(stringRequest);
     }
 
     public void guide() {
@@ -59,5 +47,39 @@ public class Guider {
         this.angle = 0f;
 
         this.requestQueue = Volley.newRequestQueue(context);
+
+        init();
+    }
+
+    private void init() {
+        final String gyroRequest="http://10.0.0.86/gyro";
+        this.gyroRequest = new StringRequest(Request.Method.GET, gyroRequest,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        angle = Float.parseFloat(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "gyro request error");
+                    }
+        });
+
+        final String velocityDeltaRequest="http://10.0.0.86/v";
+        this.gyroRequest = new StringRequest(Request.Method.GET, gyroRequest,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        angle = Float.parseFloat(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "gyro request error");
+                    }
+        });
     }
 }
