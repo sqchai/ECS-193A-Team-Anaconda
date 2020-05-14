@@ -185,8 +185,7 @@ public class Tracker extends AppCompatActivity {
                                     centerXView.setText(Integer.toString(bounds.centerX()));
                                     centerYView.setText(Integer.toString(bounds.centerY()));
 
-                                    updateCarMovement();
-
+                                    guider.updateCarPos((int)bounds.centerX(), (int)bounds.centerY());
                                 }
                             }
                         })
@@ -201,10 +200,6 @@ public class Tracker extends AppCompatActivity {
 
 
         CameraX.bindToLifecycle((LifecycleOwner)this, preview, analysis);
-    }
-
-    private void updateCarMovement() {
-
     }
 
     private void updateTransform(){
