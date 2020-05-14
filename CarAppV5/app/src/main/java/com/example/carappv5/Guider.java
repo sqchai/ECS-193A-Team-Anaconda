@@ -1,17 +1,23 @@
 package com.example.carappv5;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 public class Guider {
+    Context context;
     final String TAG = "GUIDER";
     private int x;
     private int y;
     private float angle;
+
+    RequestQueue requestQueue;
     final String gyroRequest="http://10.0.0.86/gyro";
 
     public void updateCarPos(int x, int y) {
@@ -33,11 +39,25 @@ public class Guider {
                         Log.d(TAG, "gyro request error");
                     }
                 });
+        stringRequest
     }
 
-    public Guider() {
+    public void guide() {
+
+    }
+
+    public void setStop() {
+
+    }
+
+
+    public Guider(Context context) {
+        this.context = context;
+
         this.x = 0;
         this.y = 0;
         this.angle = 0f;
+
+        this.requestQueue = Volley.newRequestQueue(context);
     }
 }
