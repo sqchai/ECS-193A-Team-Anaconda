@@ -53,6 +53,8 @@ public class Tracker extends AppCompatActivity {
     TextView centerXView;
     TextView centerYView;
 
+    Guider guider;
+
 
     //ML Kit Object Detector
     FirebaseVisionObjectDetector firebaseVisionObjectDetector;
@@ -68,6 +70,9 @@ public class Tracker extends AppCompatActivity {
         centerXView.setText("0");
         centerYView = findViewById(R.id.centery_view);
         centerYView.setText("0");
+
+        // path following algorithm encapsulated in guider
+        guider = new Guider();
 
         //init ML Kit Vision Detector
         FirebaseVisionObjectDetectorOptions options =
@@ -180,6 +185,7 @@ public class Tracker extends AppCompatActivity {
                                     centerXView.setText(Integer.toString(bounds.centerX()));
                                     centerYView.setText(Integer.toString(bounds.centerY()));
 
+                                    guider.updateCarPos((int)bounds.centerX(), (int)bounds.centerY());
                                 }
                             }
                         })
