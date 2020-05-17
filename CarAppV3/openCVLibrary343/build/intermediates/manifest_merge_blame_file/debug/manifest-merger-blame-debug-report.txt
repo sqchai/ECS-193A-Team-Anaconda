@@ -6,8 +6,8 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="8"
-8-->C:\Users\Siqi Chai\Desktop\ECS193A\ECS-193A-Team-Anaconda\CarAppV3\openCVLibrary343\src\main\AndroidManifest.xml
+8-->/Users/bellechow/Desktop/ECS-193A-Team-Anaconda/CarAppV3/openCVLibrary343/src/main/AndroidManifest.xml
 9        android:targetSdkVersion="29" />
-9-->C:\Users\Siqi Chai\Desktop\ECS193A\ECS-193A-Team-Anaconda\CarAppV3\openCVLibrary343\src\main\AndroidManifest.xml
+9-->/Users/bellechow/Desktop/ECS-193A-Team-Anaconda/CarAppV3/openCVLibrary343/src/main/AndroidManifest.xml
 10
 11</manifest>
