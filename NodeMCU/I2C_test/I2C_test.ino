@@ -61,7 +61,7 @@ void loop()
 
   Gy[0] = Gy[0];
   Gy[1] = Gy[1];
-  Gy[2] = Gy[2];
+  Gy[2] = Gy[2] + 0.002;
 
 
   dt = (millis() - time_prevs) / 1000.0;
