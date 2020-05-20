@@ -12,15 +12,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import org.opencv.android.OpenCVLoader;
-
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity";
-    static {
-        if (OpenCVLoader.initDebug()) {
-            Log.d(TAG, "OpenCv is good");
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
         //add the fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        //DrawingListFragment drawingListFragment = new DrawingListFragment();
         SavedFilesFragment savedFilesFragment = new SavedFilesFragment();
         fragmentTransaction.add(R.id.main_activity, savedFilesFragment,"list_fragment");
         fragmentTransaction.commit();
@@ -51,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
                 //user wants to add a new drawing
                 //Intent intent = new Intent(this, NewDrawingActivity.class);
                 Intent intent = new Intent(this, NewDrawingActivity.class);
-                //Intent intent = new Intent(this, CameraX.class);
                 startActivity(intent);
                 return true;
             default:
