@@ -10,8 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".CameraX"></activity>
-        <activity android:name=".ImageTracker" />
         <activity
             android:name=".NewDrawingActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
