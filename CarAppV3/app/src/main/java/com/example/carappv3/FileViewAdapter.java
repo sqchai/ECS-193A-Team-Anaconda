@@ -30,7 +30,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerAdapter.ViewHolder holder, final int position) {
         final String item_name = files.get(position);
         holder.textView.setText(item_name);
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
