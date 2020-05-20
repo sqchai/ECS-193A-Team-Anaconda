@@ -1,5 +1,6 @@
 package com.example.carappv3;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -57,8 +58,11 @@ public class StaticPicActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.discard:
-                discardCurrentEntry();
+//            case R.id.discard:
+//                discardCurrentEntry();
+//                return true;
+            case R.id.start_drawing_button:
+                startDrawingActivity();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -67,5 +71,11 @@ public class StaticPicActivity extends AppCompatActivity {
 
     private void discardCurrentEntry(){
 
+    }
+
+    private void startDrawingActivity() {
+        Intent intent = new Intent(this, Tracker.class);
+        intent.putExtra("vertices", this.mVertices);
+        this.startActivity(intent);
     }
 }
