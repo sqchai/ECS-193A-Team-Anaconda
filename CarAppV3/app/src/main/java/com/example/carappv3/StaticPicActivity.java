@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -19,6 +20,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.carappv3.database.DrawingDBHelper;
 import com.example.carappv3.database.DrawingSchema;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StaticPicActivity extends AppCompatActivity {
     StaticRouteView mRoute;
@@ -26,6 +33,7 @@ public class StaticPicActivity extends AppCompatActivity {
     String mFilename;
     SQLiteDatabase mDatabase;
     Context mContext;
+    List<List<Point>> verticesList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +46,22 @@ public class StaticPicActivity extends AppCompatActivity {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         if(getIntent().hasExtra("vertices") && getIntent().hasExtra("bitmap")&&getIntent().hasExtra("filename")) {
+            verticesList = new ArrayList<List<Point>>();
             mVertices = getIntent().getStringExtra("vertices");
+            //Log.d("vertices are", mVertices);
+            ArrayList<String> stringifiedPaths = new Gson().fromJson(mVertices,ArrayList.class);
+            Log.d("onCreate Stringified Paths first", stringifiedPaths.get(0));
+            int counter =0;
+            Type listOfMyClassObject = new TypeToken<ArrayList<Point>>() {}.getType();
+            for (String str : stringifiedPaths){
+                List<Point>tmpPoints = new Gson().fromJson(str,listOfMyClassObject);
+                verticesList.add(new ArrayList<Point>());
+                for(Point ptr : tmpPoints){
+                    verticesList.get(counter).add(ptr);
+                }
+                counter++;
+            }
+            //Log.d("TAG", Integer.toString(verticesList.get(0).get(0).x));
             mFilename = getIntent().getStringExtra("filename");
             Bitmap bitmap = getBitmapFromString(getIntent().getStringExtra("bitmap"));
             mRoute.initialize(displayMetrics,bitmap);
