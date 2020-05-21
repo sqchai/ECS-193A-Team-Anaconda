@@ -1,6 +1,8 @@
 package com.example.carappv3;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -15,20 +17,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.carappv3.database.DrawingDBHelper;
+import com.example.carappv3.database.DrawingSchema;
+
 public class StaticPicActivity extends AppCompatActivity {
     StaticRouteView mRoute;
     String mVertices;
+    String mFilename;
+    SQLiteDatabase mDatabase;
+    Context mContext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_static_route);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        mContext = getApplicationContext();
+        mDatabase = new DrawingDBHelper(mContext).getWritableDatabase();
         mRoute = findViewById(R.id.staticRouteView);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        if(getIntent().hasExtra("vertices") && getIntent().hasExtra("bitmap")) {
+        if(getIntent().hasExtra("vertices") && getIntent().hasExtra("bitmap")&&getIntent().hasExtra("filename")) {
             mVertices = getIntent().getStringExtra("vertices");
+            mFilename = getIntent().getStringExtra("filename");
             Bitmap bitmap = getBitmapFromString(getIntent().getStringExtra("bitmap"));
             mRoute.initialize(displayMetrics,bitmap);
             return;
@@ -58,9 +69,10 @@ public class StaticPicActivity extends AppCompatActivity {
             case android.R.id.home:
                 finish();
                 return true;
-//            case R.id.discard:
-//                discardCurrentEntry();
-//                return true;
+            case R.id.discard:
+                discardCurrentEntry();
+                finish();
+                return true;
             case R.id.start_drawing_button:
                 startDrawingActivity();
                 return true;
@@ -70,7 +82,8 @@ public class StaticPicActivity extends AppCompatActivity {
     }
 
     private void discardCurrentEntry(){
-
+        mDatabase.delete(DrawingSchema.DrawingTable.NAME, "_id = ?", new String[]{mFilename});
+        mDatabase.close();
     }
 
     private void startDrawingActivity() {

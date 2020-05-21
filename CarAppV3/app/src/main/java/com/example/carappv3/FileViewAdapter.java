@@ -39,6 +39,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 Intent intent = new Intent(context, StaticPicActivity.class);
                 intent.putExtra("vertices", vertices.get(position));
                 intent.putExtra("bitmap", bitmap.get(position));
+                intent.putExtra("filename", files.get(position));
                 context.startActivity(intent);
             }
         });

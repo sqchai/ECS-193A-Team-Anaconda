@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--
+
     <item
         android:id="@+id/discard"
         android:icon="@drawable/ic_clear"
         android:title="action_discard"
         app:showAsAction="ifRoom"/>
-    -->
+
     <item
         android:id="@+id/start_drawing_button"
         android:title="Start"
