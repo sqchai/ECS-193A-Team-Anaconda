@@ -43,6 +43,18 @@
         android:layout_marginTop="400dp"
         android:layout_marginLeft="100dp" />
 
+    <Button
+        android:id="@+id/begin_button"
+        android:text="Start Drawing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="300dp"
+        android:layout_marginRight="300dp"
+        />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,6 +19,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.content.pm.PackageManager;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.media.Image;
 import android.os.Bundle;
@@ -30,9 +31,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
@@ -41,7 +49,13 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.firebase.ml.vision.objects.FirebaseVisionObject;
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetector;
 import com.google.firebase.ml.vision.objects.FirebaseVisionObjectDetectorOptions;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tracker extends AppCompatActivity {
@@ -53,8 +67,17 @@ public class Tracker extends AppCompatActivity {
     TextView centerXView;
     TextView centerYView;
 
+    Button beginDrawingButton;
+
     //ML Kit Object Detector
     FirebaseVisionObjectDetector firebaseVisionObjectDetector;
+
+    //mPaths to draw
+    ArrayList<ArrayList<Point>> mPaths;
+
+    Boolean drawing;
+
+    RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +91,42 @@ public class Tracker extends AppCompatActivity {
         centerYView = findViewById(R.id.centery_view);
         centerYView.setText("0");
 
-        // path following algorithm encapsulated in guider
+        beginDrawingButton = findViewById(R.id.begin_button);
+        beginDrawingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawing = true;
+            }
+        });
+
+        requestQueue = Volley.newRequestQueue(this);
+
+        //begin with not drawing, wait for user to align camera
+        drawing = false;
+
+        //extract paths info
+        if(getIntent().hasExtra("vertices")) {
+//            String mVertices = getIntent().getStringExtra("vertices");
+//            Log.d("Tracker-Received | ", mVertices);
+//            Gson gson = new Gson();
+//            Type type = new TypeToken<ArrayList<String>>(){}.getType();
+//            ArrayList<String> paths = gson.fromJson(mVertices, type);
+//            for(String path : paths) {
+//                ArrayList<String> points = gson.fromJson(path, type);
+//                for(String point : points) {
+//                    Log.d("POINT | ", point);
+//                }
+//            }
+
+//            for(ArrayList<Point> path : mPaths) {
+//                System.out.print("[");
+//                for (Point point : path) {
+//                    System.out.print("(" +point.x + " | " + point.y + ") ");
+//                }
+//                System.out.println("]");
+//            }
+        }
+
 
         //init ML Kit Vision Detector
         FirebaseVisionObjectDetectorOptions options =
@@ -181,6 +239,11 @@ public class Tracker extends AppCompatActivity {
                                     centerYView.setText(Integer.toString(bounds.centerY()));
 
                                     //guider.updateCarPos((int)bounds.centerX(), (int)bounds.centerY());
+
+                                    if(drawing) {
+                                        //compute and send control signals
+                                        move(new Point(bounds.centerX(), bounds.centerY()));
+                                    }
                                 }
                             }
                         })
@@ -196,6 +259,8 @@ public class Tracker extends AppCompatActivity {
 
         CameraX.bindToLifecycle((LifecycleOwner)this, preview, analysis);
     }
+
+
 
     private void updateTransform(){
         Matrix mx = new Matrix();
@@ -227,6 +292,24 @@ public class Tracker extends AppCompatActivity {
 
         mx.postRotate((float)rotationDgr, cX, cY);
         textureView.setTransform(mx);
+    }
+
+    private void move(Point posCar) {
+        final String url ="http://10.0.0.86/pattern1";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("R: ", response);
+            }
+        }, new Response.ErrorListener () {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Log.d("No Response: ", error.getMessage());
+            }
+        });
+
+        requestQueue.add(stringRequest);
+        drawing = false;
     }
 
 }
