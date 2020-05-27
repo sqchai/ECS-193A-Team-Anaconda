@@ -48,19 +48,7 @@ public class StaticPicActivity extends AppCompatActivity {
         if(getIntent().hasExtra("vertices") && getIntent().hasExtra("bitmap")&&getIntent().hasExtra("filename")) {
             verticesList = new ArrayList<List<Point>>();
             mVertices = getIntent().getStringExtra("vertices");
-            //Log.d("vertices are", mVertices);
-            ArrayList<String> stringifiedPaths = new Gson().fromJson(mVertices,ArrayList.class);
-            Log.d("onCreate Stringified Paths first", stringifiedPaths.get(0));
-            int counter =0;
-            Type listOfMyClassObject = new TypeToken<ArrayList<Point>>() {}.getType();
-            for (String str : stringifiedPaths){
-                List<Point>tmpPoints = new Gson().fromJson(str,listOfMyClassObject);
-                verticesList.add(new ArrayList<Point>());
-                for(Point ptr : tmpPoints){
-                    verticesList.get(counter).add(ptr);
-                }
-                counter++;
-            }
+            //Log.d("vertices are", mVertices)
             //Log.d("TAG", Integer.toString(verticesList.get(0).get(0).x));
             mFilename = getIntent().getStringExtra("filename");
             Bitmap bitmap = getBitmapFromString(getIntent().getStringExtra("bitmap"));
