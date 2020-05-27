@@ -115,6 +115,7 @@ public class Control extends AppCompatActivity {
         String distStr = "dist="+Integer.toString(controlData.getDistance());
         String url = "http://10.0.0.86/control?"+dirStr+"&"+angleStr+"&"+distStr;
 
+        connectionReady = false;
         StringRequest controlReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -134,11 +135,11 @@ public class Control extends AppCompatActivity {
 
     private void checkConnection() {
         String url = "http://10.0.0.86/confirm";
-
+        connectionReady = false;
         StringRequest confirmReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response == "ok") {
+                if (response == "confirmed") {
                     connectionReady = true;
                 }
             }
