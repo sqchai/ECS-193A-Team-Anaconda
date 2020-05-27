@@ -73,7 +73,7 @@ public class Tracker extends AppCompatActivity {
     FirebaseVisionObjectDetector firebaseVisionObjectDetector;
 
     //mPaths to draw
-    ArrayList<ArrayList<Point>> mPaths;
+    ArrayList<ArrayList<Point>> verticesList;
 
     Boolean drawing;
 
@@ -104,27 +104,23 @@ public class Tracker extends AppCompatActivity {
         //begin with not drawing, wait for user to align camera
         drawing = false;
 
+        verticesList = new ArrayList<>();
         //extract paths info
         if(getIntent().hasExtra("vertices")) {
-//            String mVertices = getIntent().getStringExtra("vertices");
-//            Log.d("Tracker-Received | ", mVertices);
-//            Gson gson = new Gson();
-//            Type type = new TypeToken<ArrayList<String>>(){}.getType();
-//            ArrayList<String> paths = gson.fromJson(mVertices, type);
-//            for(String path : paths) {
-//                ArrayList<String> points = gson.fromJson(path, type);
-//                for(String point : points) {
-//                    Log.d("POINT | ", point);
-//                }
-//            }
-
-//            for(ArrayList<Point> path : mPaths) {
-//                System.out.print("[");
-//                for (Point point : path) {
-//                    System.out.print("(" +point.x + " | " + point.y + ") ");
-//                }
-//                System.out.println("]");
-//            }
+            String mVertices = getIntent().getStringExtra("vertices");
+            ArrayList<String> stringifiedPaths = new Gson().fromJson(mVertices,ArrayList.class);
+            int counter =0;
+            Type listOfMyClassObject = new TypeToken<ArrayList<Point>>() {}.getType();
+            for (String str : stringifiedPaths){
+                List<Point> tmpPoints = new Gson().fromJson(str,listOfMyClassObject);
+                verticesList.add(new ArrayList<Point>());
+                for(Point ptr : tmpPoints){
+                    verticesList.get(counter).add(ptr);
+                }
+                counter++;
+            }
+        } else {
+            Log.d("TrackerErr", "No extra");
         }
 
 
