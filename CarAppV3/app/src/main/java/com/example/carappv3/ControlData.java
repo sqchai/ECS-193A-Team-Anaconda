@@ -36,7 +36,7 @@ public class ControlData {
             //turn left
             myTurningDirection = 1;
         } else {
-            myTurningDirection = 0;
+            myTurningDirection = 2;
         }
 
         //find how much angle to turn
