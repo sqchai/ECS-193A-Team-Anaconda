@@ -26,9 +26,6 @@ public class Control extends AppCompatActivity {
     //translated vertices in a 192cm x 144cm grid, some vertices too close to each other is combined
     ArrayList<ArrayList<Point>> carVerticesList;
 
-    //car connection
-    boolean connectionReady;
-
     //request queue
     RequestQueue rq;
 
@@ -37,8 +34,6 @@ public class Control extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control);
 
-        //setup request queue
-        connectionReady = true;
         rq = Volley.newRequestQueue(this);
 
         userVerticesList = new ArrayList<>();
@@ -79,8 +74,6 @@ public class Control extends AppCompatActivity {
             }
         });
 
-
-        System.out.println("First part done");
         //start drawing
         draw();
     }
