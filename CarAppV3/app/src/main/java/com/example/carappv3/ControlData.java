@@ -32,7 +32,7 @@ public class ControlData {
 
         //find which dir to turn
         int dir = (c.x-pp.x) * (np.y-pp.y) - (c.y-pp.y) * (np.x-pp.x);
-        if (dir >= 0) {
+        if (dir <= 0) {
             //turn left
             myTurningDirection = 1;
         } else {
@@ -42,9 +42,11 @@ public class ControlData {
         //find how much angle to turn
         Point vec1 = cPd.getVec();
         Point vec2 = dPd.getVec();
-        double cos = (vec1.x * vec2.x + vec1.y * vec2.y) /
-                ((Math.sqrt(vec1.x * vec1.x + vec1.y * vec1.y)) * (Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y)));
-        myAngle = (int)Math.acos(cos);
+        double vecProduct = vec1.x * vec2.x + vec1.y * vec2.y;
+        double lenVec1 = Math.sqrt(vec1.x * vec1.x + vec1.y * vec1.y);
+        double lenVec2 = Math.sqrt(vec2.x * vec2.x + vec2.y * vec2.y);
+        double cos = vecProduct / (lenVec1 * lenVec2);
+        myAngle = (int)(Math.toDegrees(Math.acos(cos)));
 
         //find distance to travel from c to np
         int diffX = np.x - c.x;
