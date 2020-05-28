@@ -64,18 +64,30 @@ public class Control extends AppCompatActivity {
         carVerticesList = new ArrayList<>();
         translate();
 
-        //confirm connection
-        checkConnection();
-
-        //start drawing
-        draw();
+        System.out.println("Printing Vs");
+        for(ArrayList<Point> path : carVerticesList) {
+            for(Point p : path) {
+                System.out.print("(" + p.x + " | " + p.y+") ");
+            }
+            System.out.println();
+        }
+//
+//        //confirm connection
+//        checkConnection();
+//
+//        //start drawing
+//        draw();
     }
 
     private void translate() {
+        Point refP = new Point(500, 1000);
         for(ArrayList<Point> path : userVerticesList) {
             ArrayList<Point> newPath = new ArrayList<>();
             for(Point p : path) {
-                newPath.add(new Point((int)(p.x * 0.3), (int)(p.y * 0.3)));
+                if(! (Math.abs(p.x-refP.x) < 70 && Math.abs(p.y-refP.y) < 70)) {
+                    newPath.add(new Point((int) (p.x * 0.1), (int) (p.y * 0.1)));
+                    refP = p;
+                }
             }
             carVerticesList.add(newPath);
         }
