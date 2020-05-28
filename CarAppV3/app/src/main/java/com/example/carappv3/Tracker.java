@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -62,22 +63,21 @@ public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
     private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
+    //UI
     TextureView textureView;
-
-    TextView centerXView;
-    TextView centerYView;
-
     Button beginDrawingButton;
 
+    //Drawing
+    //user's input vertices in a 640x480 grid
+    ArrayList<ArrayList<Point>> userVerticesList;
+    //translated vertices in a 192cm x 144cm grid, some vertices too close to each other is combined
+    ArrayList<ArrayList<Point>> carVerticesList;
+    //request queue
+    RequestQueue rq;
+
+    //Vision
     //ML Kit Object Detector
     FirebaseVisionObjectDetector firebaseVisionObjectDetector;
-
-    //mPaths to draw
-    ArrayList<ArrayList<Point>> verticesList;
-
-    Boolean drawing;
-
-    RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,25 +86,12 @@ public class Tracker extends AppCompatActivity {
 
         textureView = findViewById(R.id.view_finder);
 
-        centerXView = findViewById(R.id.centerx_view);
-        centerXView.setText("0");
-        centerYView = findViewById(R.id.centery_view);
-        centerYView.setText("0");
-
         beginDrawingButton = findViewById(R.id.begin_button);
-        beginDrawingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawing = true;
-            }
-        });
 
-        requestQueue = Volley.newRequestQueue(this);
+        //load drawing related data
+        rq = Volley.newRequestQueue(this);
 
-        //begin with not drawing, wait for user to align camera
-        drawing = false;
-
-        verticesList = new ArrayList<>();
+        userVerticesList = new ArrayList<>();
         //extract paths info
         if(getIntent().hasExtra("vertices")) {
             String mVertices = getIntent().getStringExtra("vertices");
@@ -113,9 +100,9 @@ public class Tracker extends AppCompatActivity {
             Type listOfMyClassObject = new TypeToken<ArrayList<Point>>() {}.getType();
             for (String str : stringifiedPaths){
                 List<Point> tmpPoints = new Gson().fromJson(str,listOfMyClassObject);
-                verticesList.add(new ArrayList<Point>());
+                userVerticesList.add(new ArrayList<Point>());
                 for(Point ptr : tmpPoints){
-                    verticesList.get(counter).add(ptr);
+                    userVerticesList.get(counter).add(ptr);
                 }
                 counter++;
             }
@@ -123,7 +110,26 @@ public class Tracker extends AppCompatActivity {
             Log.d("TrackerErr", "No extra");
         }
 
+        //translate vertices list
+        carVerticesList = new ArrayList<>();
+        translate();
 
+        //confirm connection
+        checkConnection(new VolleyCallBack() {
+            @Override
+            public void onSuccess() {
+            }
+        });
+
+        beginDrawingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //start drawing
+                draw();
+            }
+        });
+
+        //init vision related
         //init ML Kit Vision Detector
         FirebaseVisionObjectDetectorOptions options =
                 new FirebaseVisionObjectDetectorOptions.Builder()
@@ -138,6 +144,9 @@ public class Tracker extends AppCompatActivity {
         }
     }
 
+    /**
+     Vision related functions
+     */
     private boolean allPermissionsGranted(){
 
         for(String permission : REQUIRED_PERMISSIONS){
@@ -160,7 +169,6 @@ public class Tracker extends AppCompatActivity {
             }
         }
     }
-
 
     private void startCamera() {
         CameraX.unbindAll();
@@ -227,19 +235,6 @@ public class Tracker extends AppCompatActivity {
                             public void onSuccess(List<FirebaseVisionObject> firebaseVisionObjects) {
                                 //Log.d("Object Detector", "Success");
                                 for (FirebaseVisionObject obj : firebaseVisionObjects) {
-                                    Integer id = obj.getTrackingId();
-                                    Rect bounds = obj.getBoundingBox();
-
-                                    //Log.d("OBJ_DETECTED", (id+": "+bounds.centerX() + " | "+bounds.centerY()));
-                                    centerXView.setText(Integer.toString(bounds.centerX()));
-                                    centerYView.setText(Integer.toString(bounds.centerY()));
-
-                                    //guider.updateCarPos((int)bounds.centerX(), (int)bounds.centerY());
-
-                                    if(drawing) {
-                                        //compute and send control signals
-                                        move(new Point(bounds.centerX(), bounds.centerY()));
-                                    }
                                 }
                             }
                         })
@@ -252,11 +247,8 @@ public class Tracker extends AppCompatActivity {
             }
         });
 
-
         CameraX.bindToLifecycle((LifecycleOwner)this, preview, analysis);
     }
-
-
 
     private void updateTransform(){
         Matrix mx = new Matrix();
@@ -290,22 +282,95 @@ public class Tracker extends AppCompatActivity {
         textureView.setTransform(mx);
     }
 
-    private void move(Point posCar) {
-        final String url ="http://10.0.0.86/pattern1";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+
+    /**
+     Drawing related functions
+     */
+    private void translate() {
+        Point refP = new Point(500, 1000);
+        for(ArrayList<Point> path : userVerticesList) {
+            ArrayList<Point> newPath = new ArrayList<>();
+            for(Point p : path) {
+                if(! (Math.abs(p.x-refP.x) < 70 && Math.abs(p.y-refP.y) < 70)) {
+                    newPath.add(new Point((int) (p.x * 0.1), (int) (p.y * 0.1)));
+                    refP = p;
+                }
+            }
+            carVerticesList.add(newPath);
+        }
+    }
+
+    private void checkConnection(final VolleyCallBack callBack) {
+        String url = "http://10.0.0.86/confirm";
+        StringRequest confirmReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("R: ", response);
+                if (response.equals("confirmed")) {
+                    callBack.onSuccess();
+                }
             }
-        }, new Response.ErrorListener () {
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //Log.d("No Response: ", error.getMessage());
+                Log.d("ControlActivityCheckConnection", error.getMessage());
             }
         });
 
-        requestQueue.add(stringRequest);
-        drawing = false;
+        rq.add(confirmReq);
     }
 
+    private void draw() {
+        //initially car is a the center
+        Point c = new Point(50, 100);
+        Point pp = new Point(50, 101);
+        PositionData cPd = new PositionData(c, pp);
+        boolean ready = true;
+        while(!carVerticesList.isEmpty()) {
+            //get next path
+            ArrayList<Point> path = carVerticesList.remove(0);
+            while(!path.isEmpty()) {
+                //connection ready, get next target point
+                Point np = path.remove(0);
+                System.out.println("np: " + np.x + ","+np.y);
+                ControlData controlData = ControlData.getControlData(cPd, np);
+
+                sendControlData(new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                    }
+                }, controlData);
+
+                cPd = new PositionData(np, cPd.getC());
+            }
+        }
+    }
+
+    private void sendControlData(final VolleyCallBack callBack, ControlData controlData) {
+        String dirStr = "dir="+Integer.toString(controlData.getTurningDirection());
+        String angleStr = "angle="+Integer.toString(controlData.getAngle());
+        String distStr = "dist="+Integer.toString(controlData.getDistance());
+        String url = "http://10.0.0.86/control?"+dirStr+"&"+angleStr+"&"+distStr;
+
+        StringRequest controlReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (response.equals("ok")) {
+                    callBack.onSuccess();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("ControlActivitySendControl", error.getMessage());
+            }
+        });
+
+        controlReq.setRetryPolicy(new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT))
+        rq.add(controlReq);
+
+        System.out.println("np: control data " + controlData.getTurningDirection() + " | "
+        + controlData.getAngle() + " | "
+                + controlData.getDistance());
+    }
 }
