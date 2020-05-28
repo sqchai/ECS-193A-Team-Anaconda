@@ -98,7 +98,8 @@ public class StaticPicActivity extends AppCompatActivity {
     }
 
     private void startDrawingActivity() {
-        Intent intent = new Intent(this, Tracker.class);
+        //Intent intent = new Intent(this, Tracker.class);
+        Intent intent = new Intent(this, Control.class);
         intent.putExtra("vertices", this.mVertices);
         this.startActivity(intent);
     }
