@@ -40,6 +40,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -58,6 +59,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class Tracker extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
@@ -226,7 +230,7 @@ public class Tracker extends AppCompatActivity {
                 }
                 Image mediaImage = image.getImage();
                 int rotation = degreesToFirebaseRotation(rotationDegrees);
-                FirebaseVisionImage firebaseVisionImage =
+                final FirebaseVisionImage firebaseVisionImage =
                         FirebaseVisionImage.fromMediaImage(mediaImage, rotation);
 
                 firebaseVisionObjectDetector.processImage(firebaseVisionImage)
@@ -234,7 +238,10 @@ public class Tracker extends AppCompatActivity {
                             @Override
                             public void onSuccess(List<FirebaseVisionObject> firebaseVisionObjects) {
                                 //Log.d("Object Detector", "Success");
-                                for (FirebaseVisionObject obj : firebaseVisionObjects) {
+                                if(firebaseVisionObjects.size() == 1) {
+                                    int x = firebaseVisionObjects.get(0).getBoundingBox().centerX();
+                                    int y = firebaseVisionObjects.get(0).getBoundingBox().centerY();
+
                                 }
                             }
                         })
@@ -292,7 +299,7 @@ public class Tracker extends AppCompatActivity {
             ArrayList<Point> newPath = new ArrayList<>();
             for(Point p : path) {
                 if(! (Math.abs(p.x-refP.x) < 70 && Math.abs(p.y-refP.y) < 70)) {
-                    newPath.add(new Point((int) (p.x * 0.1), (int) (p.y * 0.1)));
+                    newPath.add(new Point((int) (p.x * 0.05), (int) (p.y * 0.05)));
                     refP = p;
                 }
             }
@@ -321,8 +328,8 @@ public class Tracker extends AppCompatActivity {
 
     private void draw() {
         //initially car is a the center
-        Point c = new Point(50, 100);
-        Point pp = new Point(50, 101);
+        Point c = new Point(25, 50);
+        Point pp = new Point(25, 51);
         PositionData cPd = new PositionData(c, pp);
         boolean ready = true;
         while(!carVerticesList.isEmpty()) {
@@ -351,23 +358,38 @@ public class Tracker extends AppCompatActivity {
         String distStr = "dist="+Integer.toString(controlData.getDistance());
         String url = "http://10.0.0.86/control?"+dirStr+"&"+angleStr+"&"+distStr;
 
-        StringRequest controlReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                if (response.equals("ok")) {
-                    callBack.onSuccess();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ControlActivitySendControl", error.getMessage());
-            }
-        });
 
-        controlReq.setRetryPolicy(new DefaultRetryPolicy(0,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT))
-        rq.add(controlReq);
+//        StringRequest controlReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                if (response.equals("ok")) {
+//                    callBack.onSuccess();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Log.d("ControlActivitySendControl", error.getMessage());
+//            }
+//        });
+//
+//        controlReq.setRetryPolicy(new DefaultRetryPolicy(0,
+//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//        rq.add(controlReq);
+
+        RequestFuture<String> future = RequestFuture.newFuture();
+        StringRequest request = new StringRequest(Request.Method.GET, url, future, future);
+        request.setRetryPolicy(new DefaultRetryPolicy(0, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        rq.add(request);
+        try {
+            String response = future.get(500, TimeUnit.MICROSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("np: control data " + controlData.getTurningDirection() + " | "
         + controlData.getAngle() + " | "
