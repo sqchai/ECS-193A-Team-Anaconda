@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.textclassifier.TextLinks;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -39,6 +38,7 @@ public class Control extends AppCompatActivity {
         setContentView(R.layout.activity_control);
 
         //setup request queue
+        connectionReady = true;
         rq = Volley.newRequestQueue(this);
 
         userVerticesList = new ArrayList<>();
@@ -64,19 +64,25 @@ public class Control extends AppCompatActivity {
         carVerticesList = new ArrayList<>();
         translate();
 
-        System.out.println("Printing Vs");
+        System.out.println("Printing Vs: ");
         for(ArrayList<Point> path : carVerticesList) {
             for(Point p : path) {
                 System.out.print("(" + p.x + " | " + p.y+") ");
             }
             System.out.println();
         }
-//
-//        //confirm connection
-//        checkConnection();
-//
-//        //start drawing
-//        draw();
+
+        //confirm connection
+        checkConnection(new VolleyCallBack() {
+            @Override
+            public void onSuccess() {
+            }
+        });
+
+
+        System.out.println("First part done");
+        //start drawing
+        draw();
     }
 
     private void translate() {
@@ -95,44 +101,44 @@ public class Control extends AppCompatActivity {
 
     private void draw() {
         //initially car is a the center
-        Point c = new Point(96, 77);
-        Point pp = new Point(96, 80);
+        Point c = new Point(50, 100);
+        Point pp = new Point(50, 101);
         PositionData cPd = new PositionData(c, pp);
         while(!carVerticesList.isEmpty()) {
-            //while there are more paths
-            if(!connectionReady) {
-                //wait for car to complete last action
-                continue;
-            }
+            System.out.println("New Path");
 
             //get next path
             ArrayList<Point> path = carVerticesList.remove(0);
             while(!path.isEmpty()) {
-                if(!connectionReady) {
-                    //wait for car to complete last action
-                    continue;
-                }
-
+                System.out.println("New Point");
                 //connection ready, get next target point
                 Point np = path.remove(0);
+                System.out.println("np: " + np.x + "," + np.y);
                 ControlData controlData = ControlData.getControlData(cPd, np);
-                sendControlData(controlData);
+
+                sendControlData(new VolleyCallBack() {
+                    @Override
+                    public void onSuccess() {
+                    }
+                }, controlData);
+
+                cPd = new PositionData(np, cPd.getC());
             }
         }
     }
 
-    private void sendControlData(ControlData controlData) {
+    private void sendControlData(final VolleyCallBack callBack, ControlData controlData) {
         String dirStr = "dir="+Integer.toString(controlData.getTurningDirection());
         String angleStr = "angle="+Integer.toString(controlData.getAngle());
         String distStr = "dist="+Integer.toString(controlData.getDistance());
         String url = "http://10.0.0.86/control?"+dirStr+"&"+angleStr+"&"+distStr;
 
-        connectionReady = false;
         StringRequest controlReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response == "ok") {
-                    connectionReady = true;
+                if (response.equals("ok")) {
+                    callBack.onSuccess();
+                    System.out.println("Point arrived");
                 }
             }
         }, new Response.ErrorListener() {
@@ -143,22 +149,30 @@ public class Control extends AppCompatActivity {
         });
 
         rq.add(controlReq);
+
+        String mdir = "RIGHT";
+        if(controlData.getTurningDirection() == 1) {
+            mdir = "LEFT";
+        }
+        System.out.println("turn " + controlData.getAngle() +
+                " to the " + mdir + " move " + controlData.getDistance());
     }
 
-    private void checkConnection() {
+    private void checkConnection(final VolleyCallBack callBack) {
         String url = "http://10.0.0.86/confirm";
-        connectionReady = false;
         StringRequest confirmReq = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (response == "confirmed") {
-                    connectionReady = true;
+                if (response.equals("confirmed")) {
+                    callBack.onSuccess();
+                    System.out.println("Connection confirmed");
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("ControlActivityCheckConnection", error.getMessage());
+                System.out.println("Connection error");
             }
         });
 
